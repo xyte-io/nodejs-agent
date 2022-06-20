@@ -1,7 +1,7 @@
 {
-  "name": "node-package-boilerplate",
+  "name": "nodejs-agent",
   "version": "0.0.1",
-  "description": "",
+  "description": "Demo implementation of a client accessing Xyte's servers",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
