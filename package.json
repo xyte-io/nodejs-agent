@@ -46,5 +46,15 @@
   "volta": {
     "node": "18.4.0",
     "npm": "8.12.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xyte-io/nodejs-agent.git"
+  },
+  "author": "Xyte",
+  "bugs": {
+    "url": "https://github.com/xyte-io/nodejs-agent/issues"
+  },
+  "homepage": "https://github.com/xyte-io/nodejs-agent"
+
 }
