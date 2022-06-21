@@ -71,8 +71,12 @@
     /* Advanced Options */
     "skipLibCheck": true
     /* Skip type checking of declaration files. */,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
     /* Disallow inconsistently-cased references to the same file. */
+    "lib": [
+      // TS2304: Cannot find name 'fetch'. hack as fetch isn't in @types/node and typescript complains that fetch isn't defined
+      "webworker"
+    ]
   },
   "include": [
     "src"
