@@ -1,7 +1,7 @@
 import { setTimeout } from 'timers/promises';
 import restart from './helpers/restart';
 import authenticateDevice from './authentication';
-// import notifyServerLoop from './scheduler';
+import notifyServerLoop from './scheduler';
 import { INTERVAL_IN_MS } from './helpers/constants';
 
 process.on('uncaughtException', (err: typeof Error) => {
@@ -24,7 +24,7 @@ async function main() {
       throw new Error('Critical Error: missing device auth configuration. unable to proceed. exiting!');
     }
 
-    // await notifyServerLoop(authConfig.id, authConfig.access_key);
+    await notifyServerLoop(authConfig.id, authConfig.access_key);
   } catch (error) {
     console.error(error);
 
