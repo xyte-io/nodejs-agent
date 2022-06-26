@@ -6,7 +6,7 @@ const restart = () => {
   const { env, argv } = process;
   env._argv = JSON.stringify(argv);
 
-  spawn(argv[0], [join(path.resolve(), '..', 'main.js')], {
+  spawn(argv[0], [join(path.resolve(), 'main.js')], {
     detached: true,
     stdio: 'inherit',
     env,
