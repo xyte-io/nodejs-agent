@@ -1,5 +1,6 @@
 import { MODEL_ID, PARTNER_KEY, MAC, SERIAL, FIRMWARE_VERSION, XYTE_SERVER } from './helpers/constants';
 import { updateStorage, authenticateDeviceFromStorage } from './helpers/storage';
+import requestAPI from './helpers/network';
 
 const REGISTRATION_PAYLOAD = JSON.stringify({
   mac: MAC,
@@ -17,16 +18,14 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
   Registration can only be done once for each device! (Mac + Serial number)
  */
 const registerDevice = async () => {
-  const registrationResponse = await (
-    await fetch(`${XYTE_SERVER}/v1/devices`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': `${REGISTRATION_PAYLOAD.length}`,
-      },
-      body: REGISTRATION_PAYLOAD,
-    })
-  ).json();
+  const registrationResponse = await requestAPI(`${XYTE_SERVER}/v1/devices`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': `${REGISTRATION_PAYLOAD.length}`,
+    },
+    body: REGISTRATION_PAYLOAD,
+  });
 
   console.log('* Register device: device registration response:', registrationResponse);
 

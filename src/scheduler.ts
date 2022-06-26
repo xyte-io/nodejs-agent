@@ -3,6 +3,7 @@ import { getTelemetry, handleCommand } from './todo';
 import evaluateConfigVersion from './config';
 import handleLicense from './licenses';
 import { INTERVAL_IN_MS, XYTE_SERVER } from './helpers/constants';
+import requestAPI from './helpers/network';
 
 /*
   This function runs every INTERVAL_IN_MS milliseconds and:
@@ -19,17 +20,15 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
       config_version: configVersion,
       command: commandFlag,
       new_licenses: newLicenses,
-    } = await (
-      await fetch(`${XYTE_SERVER}/v1/devices/${deviceId}/telemetry`, {
-        method: 'POST',
-        headers: {
-          'Authorization': accessKey,
-          'Content-Type': 'application/json',
-          'Content-Length': `${telemetryPayload.length}`,
-        },
-        body: telemetryPayload,
-      })
-    ).json();
+    } = await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/telemetry`, {
+      method: 'POST',
+      headers: {
+        'Authorization': accessKey,
+        'Content-Type': 'application/json',
+        'Content-Length': `${telemetryPayload.length}`,
+      },
+      body: telemetryPayload,
+    });
 
     // 2. Checks if the server has updated configuration, and if so, update it
     await evaluateConfigVersion(deviceId, accessKey, configVersion);
@@ -37,15 +36,13 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
     // 3. Checks if there are pending commands, and if so, attempt to perform them
     if (Boolean(commandFlag)) {
       // a. query the server for the command
-      const command = await (
-        await fetch(`${XYTE_SERVER}/v1/devices/${deviceId}/command`, {
-          method: 'GET',
-          headers: {
-            'Authorization': accessKey,
-            'Content-Type': 'application/json',
-          },
-        })
-      ).json();
+      const command = await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/command`, {
+        method: 'GET',
+        headers: {
+          'Authorization': accessKey,
+          'Content-Type': 'application/json',
+        },
+      });
 
       // b. Perform the command on the device
       await handleCommand(command);
@@ -56,7 +53,7 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
         message: 'Not important', // a message to describe `failed` status error
       });
 
-      await fetch(`${XYTE_SERVER}/v1/devices/${deviceId}/command`, {
+      await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/command`, {
         method: 'POST',
         headers: {
           'Authorization': accessKey,
@@ -69,15 +66,13 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
 
     // 4. Checks if there are any license changes required
     if (Boolean(newLicenses)) {
-      const licenses = await (
-        await fetch(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
-          method: 'GET',
-          headers: {
-            'Authorization': accessKey,
-            'Content-Type': 'application/json',
-          },
-        })
-      ).json();
+      const licenses = await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
+        method: 'GET',
+        headers: {
+          'Authorization': accessKey,
+          'Content-Type': 'application/json',
+        },
+      });
 
       /*
         The following code makes sure each license update is done one after the other.

@@ -1,6 +1,7 @@
 import { readStorage, setStorage } from './helpers/storage';
 import { applyLicense, removeLicense } from './todo';
 import { XYTE_SERVER } from './helpers/constants';
+import requestAPI from './helpers/network';
 
 // License addition has 3 steps:
 // 1. Enable relevant features on the device
@@ -18,7 +19,7 @@ const handleAddLicense = async (deviceId: string, accessKey: string, license: Re
     state: 'inuse',
   });
 
-  await fetch(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
+  await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
     method: 'POST',
     headers: {
       'Authorization': accessKey,
@@ -49,7 +50,7 @@ const handleRemoveLicense = async (deviceId: string, accessKey: string, license:
     state: 'removed',
   });
 
-  await fetch(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
+  await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
     method: 'POST',
     headers: {
       'Authorization': accessKey,

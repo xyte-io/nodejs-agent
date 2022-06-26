@@ -1,6 +1,7 @@
 import { readStorage, setStorage } from './helpers/storage';
 import { updateConfig } from './todo';
 import { XYTE_SERVER } from './helpers/constants';
+import requestAPI from './helpers/network';
 
 /*
   Check if the configuration version on the server, is newer than local
@@ -25,15 +26,13 @@ const evaluateConfigVersion = async (deviceId: string, accessKey: string, server
   // check if local configuration is outdated
   if (serverVersion > localVersion) {
     // Get the latest configuration from the server
-    const newConfig = await (
-      await fetch(`${XYTE_SERVER}/v1/devices/${deviceId}/config`, {
-        method: 'GET',
-        headers: {
-          'Authorization': accessKey,
-          'Content-Type': 'application/json',
-        },
-      })
-    ).json();
+    const newConfig = await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/config`, {
+      method: 'GET',
+      headers: {
+        'Authorization': accessKey,
+        'Content-Type': 'application/json',
+      },
+    });
 
     // update device with the new configuration.
     await updateConfig(newConfig);
@@ -42,7 +41,7 @@ const evaluateConfigVersion = async (deviceId: string, accessKey: string, server
     await setStorage({ ...storedConfig, ...newConfig });
 
     // Update the server with our current configuration
-    await fetch(`${XYTE_SERVER}/v1/devices/${deviceId}/config`, {
+    await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/config`, {
       method: 'POST',
       headers: {
         'Authorization': accessKey,

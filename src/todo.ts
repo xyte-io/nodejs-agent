@@ -50,3 +50,12 @@ export const getTelemetry = async () => {
     throw error;
   }
 };
+
+export const revokeDevice = async () => {
+  console.log('TODO: Handle device revocation upon any network response with status=401,403');
+  try {
+    return Promise.resolve();
+  } catch (error) {
+    throw error;
+  }
+};
