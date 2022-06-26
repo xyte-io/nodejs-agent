@@ -1,6 +1,6 @@
 import { setTimeout } from 'timers/promises';
 import restart from './helpers/restart';
-// import authenticateDevice from './authentication';
+import authenticateDevice from './authentication';
 // import notifyServerLoop from './scheduler';
 import { INTERVAL_IN_MS } from './helpers/constants';
 
@@ -18,12 +18,12 @@ process.on('SIGTERM', () => {
 
 async function main() {
   try {
-    // const authConfig = await authenticateDevice();
-    //
-    // if (!authConfig) {
-    //   throw new Error('Critical Error: missing device auth configuration. unable to proceed. exiting!');
-    // }
-    //
+    const authConfig = await authenticateDevice();
+
+    if (!authConfig) {
+      throw new Error('Critical Error: missing device auth configuration. unable to proceed. exiting!');
+    }
+
     // await notifyServerLoop(authConfig.id, authConfig.access_key);
   } catch (error) {
     console.error(error);
