@@ -1,7 +1,7 @@
-import { readStorage, setStorage } from './helpers/storage';
-import { updateConfig } from './todo';
-import { XYTE_SERVER } from './helpers/constants';
-import requestAPI from './helpers/network';
+import { readStorage, setStorage } from './helpers/storage.js';
+import { updateConfig } from './todo.js';
+import { XYTE_SERVER } from './helpers/constants.js';
+import requestAPI from './helpers/network.js';
 
 /*
   Check if the configuration version on the server, is newer than local

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { CONFIG_FILE_NAME } from './constants';
+import { CONFIG_FILE_NAME } from './constants.js';
 
 // Read JSON data from file
 export const readStorage = () => {

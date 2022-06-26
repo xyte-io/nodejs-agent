@@ -1,7 +1,7 @@
-import { readStorage, setStorage } from './helpers/storage';
-import { applyLicense, removeLicense } from './todo';
-import { XYTE_SERVER } from './helpers/constants';
-import requestAPI from './helpers/network';
+import { readStorage, setStorage } from './helpers/storage.js';
+import { applyLicense, removeLicense } from './todo.js';
+import { XYTE_SERVER } from './helpers/constants.js';
+import requestAPI from './helpers/network.js';
 
 // License addition has 3 steps:
 // 1. Enable relevant features on the device

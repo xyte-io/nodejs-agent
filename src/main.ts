@@ -1,8 +1,8 @@
 import { setTimeout } from 'timers/promises';
-import restart from './helpers/restart';
-import authenticateDevice from './authentication';
-import notifyServerLoop from './scheduler';
-import { INTERVAL_IN_MS } from './helpers/constants';
+import restart from './helpers/restart.js';
+import authenticateDevice from './authentication.js';
+import notifyServerLoop from './scheduler.js';
+import { INTERVAL_IN_MS } from './helpers/constants.js';
 
 process.on('uncaughtException', (err: typeof Error) => {
   console.error('Error occurred:', err);

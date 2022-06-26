@@ -1,6 +1,6 @@
-import { MODEL_ID, PARTNER_KEY, MAC, SERIAL, FIRMWARE_VERSION, XYTE_SERVER } from './helpers/constants';
-import { updateStorage, authenticateDeviceFromStorage } from './helpers/storage';
-import requestAPI from './helpers/network';
+import { MODEL_ID, PARTNER_KEY, MAC, SERIAL, FIRMWARE_VERSION, XYTE_SERVER } from './helpers/constants.js';
+import { updateStorage, authenticateDeviceFromStorage } from './helpers/storage.js';
+import requestAPI from './helpers/network.js';
 
 const REGISTRATION_PAYLOAD = JSON.stringify({
   mac: MAC,

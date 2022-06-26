@@ -1,9 +1,9 @@
 import { setTimeout } from 'timers/promises';
-import { getTelemetry, handleCommand } from './todo';
-import evaluateConfigVersion from './config';
-import handleLicense from './licenses';
-import { INTERVAL_IN_MS, XYTE_SERVER } from './helpers/constants';
-import requestAPI from './helpers/network';
+import { getTelemetry, handleCommand } from './todo.js';
+import evaluateConfigVersion from './config.js';
+import handleLicense from './licenses.js';
+import requestAPI from './helpers/network.js';
+import { INTERVAL_IN_MS, XYTE_SERVER } from './helpers/constants.js';
 
 /*
   This function runs every INTERVAL_IN_MS milliseconds and:

@@ -1,5 +1,5 @@
-import restart from './restart';
-import { revokeDevice } from '../todo';
+import restart from './restart.js';
+import { revokeDevice } from '../todo.js';
 
 const requestAPI = async (url: string, requestPayload: any) => {
   const rawResponse = await fetch(url, requestPayload);
