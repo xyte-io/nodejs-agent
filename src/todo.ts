@@ -5,7 +5,7 @@ import process from 'node:process';
 export const applyLicense = async (license: any) => {
   console.log('TODO: Apply new license', license);
   try {
-    return Promise.resolve();
+    return;
   } catch (error) {
     throw error;
   }
@@ -14,7 +14,7 @@ export const applyLicense = async (license: any) => {
 export const removeLicense = async (license: any) => {
   console.log('TODO: Remove existing license', license);
   try {
-    return Promise.resolve();
+    return;
   } catch (error) {
     throw error;
   }
@@ -23,7 +23,7 @@ export const removeLicense = async (license: any) => {
 export const handleCommand = async (command: any) => {
   console.log('TODO: Handle command', command);
   try {
-    return Promise.resolve();
+    return;
   } catch (error) {
     throw error;
   }
@@ -32,13 +32,14 @@ export const handleCommand = async (command: any) => {
 export const updateConfig = async (config: any) => {
   console.log('TODO: Update device config', config);
   try {
-    return Promise.resolve();
+    return;
   } catch (error) {
     throw error;
   }
 };
 
 export const getTelemetry = async () => {
+  console.log('TODO: Get telemetry data for the device');
   try {
     return {
       status: 'online',
@@ -54,7 +55,7 @@ export const getTelemetry = async () => {
 export const revokeDevice = async () => {
   console.log('TODO: Handle device revocation upon any network response with status=401,403');
   try {
-    return Promise.resolve();
+    return;
   } catch (error) {
     throw error;
   }
