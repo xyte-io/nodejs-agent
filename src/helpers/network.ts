@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import fetch from 'isomorphic-fetch';
 import restart from './restart.js';
 import { revokeDevice } from '../todo.js';
 import { CONFIG_FILE_NAME } from './constants.js';
