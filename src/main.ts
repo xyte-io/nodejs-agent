@@ -1,4 +1,3 @@
-import { setTimeout } from 'timers/promises';
 import restart from './helpers/restart.js';
 import authenticateDevice from './authentication.js';
 import notifyServerLoop from './scheduler.js';
@@ -28,9 +27,7 @@ async function main() {
   } catch (error) {
     console.error(error);
 
-    await setTimeout(INTERVAL_IN_MS, async () => await main());
-
-    throw error;
+    setTimeout(async () => await main(), INTERVAL_IN_MS);
   }
 }
 

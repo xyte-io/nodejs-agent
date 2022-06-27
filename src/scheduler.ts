@@ -1,4 +1,3 @@
-import { setTimeout } from 'timers/promises';
 import { getTelemetry, handleCommand } from './todo.js';
 import evaluateConfigVersion from './config.js';
 import handleLicense from './licenses.js';
@@ -84,7 +83,7 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
   }
 
   // finally restart the routine (in 10s)
-  await setTimeout(INTERVAL_IN_MS, async () => await notifyServerLoop(deviceId, accessKey));
+  setTimeout(async () => await notifyServerLoop(deviceId, accessKey), INTERVAL_IN_MS);
 };
 
 export default notifyServerLoop;
