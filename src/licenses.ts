@@ -70,16 +70,12 @@ const handleLicense = async (deviceId: string, accessKey: string, license: Recor
 
     if (hasAdded) {
       delete license['add'];
-
-      return;
     }
   } else if (Boolean(license.remove)) {
     const hasDeleted = await handleRemoveLicense(deviceId, accessKey, license);
 
     if (hasDeleted) {
       delete license['remove'];
-
-      return;
     }
   }
 };
