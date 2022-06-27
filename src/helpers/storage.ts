@@ -1,10 +1,12 @@
 import fs from 'node:fs';
-import path, { join } from 'node:path';
+import path from 'node:path';
 import { CONFIG_FILE_NAME } from './constants.js';
 
 // Read JSON data from file
 export const readStorage = () => {
-  const storage = JSON.parse(fs.readFileSync(join(path.resolve(), CONFIG_FILE_NAME), 'ascii'));
+  const storage =
+    fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
+    JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
 
   if (Boolean(storage)) {
     console.log('* Read storage: found something in storage');
@@ -15,7 +17,7 @@ export const readStorage = () => {
 
 // Replace JSON data in file
 export const setStorage = (payload: any) => {
-  fs.writeFileSync(join(path.resolve(), CONFIG_FILE_NAME), JSON.stringify(payload), 'ascii');
+  fs.writeFileSync(path.resolve(CONFIG_FILE_NAME), JSON.stringify(payload), 'ascii');
 };
 
 // Merge JSON data with one saved in the file
