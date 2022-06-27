@@ -37,19 +37,22 @@ const registerDevice = async () => {
 
 const authenticateDevice = async () => {
   try {
-    return authenticateDeviceFromStorage(); // retrieved settings from storage and check if device already registered
-  } catch (storedAuthError) {
-    console.error('* AuthenticateDevice fn: validation (from storage) of device FAILED', storedAuthError);
+    const storedSettings = authenticateDeviceFromStorage(); // retrieved settings from storage and check if device already registered
 
-    try {
-      console.log('* AuthenticateDevice fn: attempting (new) device registration');
+    if (Boolean(storedSettings)) {
+      console.log('* AuthenticateDevice fn: validation (from storage) of device SUCCESS');
 
-      return registerDevice(); // attempt to register device with Xyte's servers
-    } catch (registrationError) {
-      console.error('* AuthenticateDevice fn: validation (via network) of device FAILED', registrationError);
-
-      return null;
+      return storedSettings;
     }
+
+    console.error('* AuthenticateDevice fn: validation (from storage) of device FAILED');
+    console.log('* AuthenticateDevice fn: validation (from network) of device SUCCESS');
+
+    return registerDevice(); // attempt to register device with Xyte's servers
+  } catch (registrationError) {
+    console.error('* AuthenticateDevice fn: validation (via network) of device FAILED', registrationError);
+
+    return null;
   }
 };
 

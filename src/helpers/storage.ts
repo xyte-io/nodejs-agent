@@ -16,21 +16,17 @@ export const readStorage = () => {
 };
 
 // Replace JSON data in file
-export const setStorage = (payload: any) => {
+export const setStorage = (payload: any) =>
   fs.writeFileSync(path.resolve(CONFIG_FILE_NAME), JSON.stringify(payload), 'ascii');
-};
 
 // Merge JSON data with one saved in the file
-export const updateStorage = async (payload: Record<string, any>) => {
-  const storedPayload = readStorage();
-  setStorage({ ...storedPayload, ...payload });
-};
+export const updateStorage = async (payload: Record<string, any>) => setStorage({ ...readStorage(), ...payload });
 
 /* Succeed if stored data has an 'id' property, return an error otherwise */
 export const authenticateDeviceFromStorage = () => {
   const storedSettings = readStorage();
 
-  if (Boolean(storedSettings.id)) {
+  if (Boolean(storedSettings) && Boolean(storedSettings.id)) {
     console.log('* Register device: retrieved settings from storage');
 
     return storedSettings;
