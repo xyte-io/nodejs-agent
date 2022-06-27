@@ -32,4 +32,6 @@ async function main() {
 }
 
 // program starts here:
-await main();
+(async () => {
+  await main();
+})();
