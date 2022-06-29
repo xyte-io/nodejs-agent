@@ -18,6 +18,7 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
   Registration can only be done once for each device! (Mac + Serial number)
  */
 const registerDevice = async () => {
+  console.log('- RegisterDevice fn - START');
   const registrationResponse = await requestAPI(`${XYTE_SERVER}/v1/devices`, {
     method: 'POST',
     headers: {
@@ -36,6 +37,7 @@ const registerDevice = async () => {
 };
 
 const authenticateDevice = async () => {
+  console.log('- AuthenticateDevice fn - START');
   try {
     const storedSettings = authenticateDeviceFromStorage(); // retrieved settings from storage and check if device already registered
 

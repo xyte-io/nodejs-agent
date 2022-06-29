@@ -1,21 +1,10 @@
-import restart from './helpers/restart.js';
 import authenticateDevice from './authentication.js';
 import notifyServerLoop from './scheduler.js';
 import { INTERVAL_IN_MS } from './helpers/constants.js';
 
-process.on('uncaughtException', (err: typeof Error) => {
-  console.error('Error occurred:', err);
-
-  restart();
-});
-
-process.on('SIGTERM', () => {
-  console.error('SIGTERM');
-
-  restart();
-});
-
 async function main() {
+  console.log('-----------------------------------------------------------------------------------------');
+  console.log('- Main fn - START');
   try {
     const authConfig = await authenticateDevice();
 
@@ -25,13 +14,17 @@ async function main() {
 
     await notifyServerLoop(authConfig.id, authConfig.access_key);
   } catch (error) {
+    console.log('- Main fn catch - ERROR');
     console.error(error);
 
+    console.log('- Main fn catch - Restarting in:', INTERVAL_IN_MS);
     setTimeout(async () => await main(), INTERVAL_IN_MS);
   }
 }
 
 // program starts here:
 (async () => {
+  console.log('-----------------------------------------------------------------------------------------');
+  console.log('Starting Xyte`s agent');
   await main();
 })();

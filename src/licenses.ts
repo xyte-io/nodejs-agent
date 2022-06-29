@@ -8,6 +8,8 @@ import requestAPI from './helpers/network.js';
 // 2. Add to stored licenses list
 // 3. Notify server license was activated
 const handleAddLicense = async (deviceId: string, accessKey: string, license: Record<string, any>) => {
+  console.log('- HandleAddLicense fn - START');
+
   await applyLicense(license);
 
   const config = readStorage();
@@ -37,6 +39,8 @@ const handleAddLicense = async (deviceId: string, accessKey: string, license: Re
 // 2. Remove from stored licenses list
 // 3. Notify server license was removed
 const handleRemoveLicense = async (deviceId: string, accessKey: string, license: Record<string, any>) => {
+  console.log('- HandleRemoveLicense fn - START');
+
   await removeLicense(license);
 
   const config = readStorage();
@@ -65,6 +69,7 @@ const handleRemoveLicense = async (deviceId: string, accessKey: string, license:
 
 // For each license, check if it is marked to be added or removed
 const handleLicense = async (deviceId: string, accessKey: string, license: Record<string, any>) => {
+  console.log('- HandleLicense fn - START');
   if (Boolean(license.add)) {
     const hasAdded = await handleAddLicense(deviceId, accessKey, license);
 
