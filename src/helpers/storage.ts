@@ -1,5 +1,5 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import * as fs from 'fs';
+import path from 'path';
 import { CONFIG_FILE_NAME } from './constants.js';
 
 // Read JSON data from file

@@ -1,5 +1,5 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import * as fs from 'fs';
+import path from 'path';
 import fetch from 'isomorphic-fetch';
 import restart from './restart.js';
 import { revokeDevice } from '../todo.js';
@@ -15,7 +15,7 @@ const requestAPI = async (url: string, requestPayload: any) => {
     try {
       fs.unlinkSync(path.resolve(CONFIG_FILE_NAME));
     } catch (error) {
-      console.log('* RequestAPI fn - fs.unlinkSync 401,403 - ERROR - config file name:', CONFIG_FILE_NAME);
+      console.log('** RequestAPI fn (401,403) - fs.unlinkSync - ERROR - config file name:', CONFIG_FILE_NAME);
       console.error(error);
     } finally {
       await revokeDevice();
