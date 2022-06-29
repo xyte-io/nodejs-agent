@@ -43,7 +43,7 @@ export const getTelemetry = async () => {
     return {
       status: 'online',
       telemetries: {
-        ...process.resourceUsage(),
+        ...process.memoryUsage(),
       },
     };
   } catch (error) {
