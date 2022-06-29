@@ -6,24 +6,29 @@ import { revokeDevice } from '../todo.js';
 import { CONFIG_FILE_NAME } from './constants.js';
 
 const requestAPI = async (url: string, requestPayload: any) => {
-  console.log('- RequestAPI fn - START', url, requestPayload);
+  console.group('RequestAPI fn');
+  console.log('url:', url);
+  console.log('payload:', requestPayload);
 
   const rawResponse = await fetch(url, requestPayload);
 
   if (rawResponse.status === 401 || rawResponse.status === 403) {
     console.error('Unauthenticated, voiding saved settings and restarting process');
     try {
+      console.log('Attempting to delete config file');
       fs.unlinkSync(path.resolve(CONFIG_FILE_NAME));
     } catch (error) {
-      console.log('** RequestAPI fn (401,403) - fs.unlinkSync - ERROR - config file name:', CONFIG_FILE_NAME);
+      console.log('ERROR deleting config file - config file name:', CONFIG_FILE_NAME);
       console.error(error);
     } finally {
       await revokeDevice();
 
+      console.groupEnd();
       restart();
     }
   }
 
+  console.groupEnd();
   return await rawResponse.json();
 };
 

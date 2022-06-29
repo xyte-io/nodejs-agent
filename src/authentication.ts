@@ -1,11 +1,10 @@
-import { MODEL_ID, PARTNER_KEY, MAC, SERIAL, FIRMWARE_VERSION, XYTE_SERVER } from './helpers/constants.js';
+import { HARDWARE_KEY, PARTNER_KEY, NANO_ID, FIRMWARE_VERSION, XYTE_SERVER } from './helpers/constants.js';
 import { updateStorage, authenticateDeviceFromStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 
 const REGISTRATION_PAYLOAD = JSON.stringify({
-  mac: MAC,
-  sn: SERIAL,
-  model_id: MODEL_ID,
+  nano_id: NANO_ID,
+  hardware_key: HARDWARE_KEY,
   partner_key: PARTNER_KEY,
   firmware_version: FIRMWARE_VERSION,
   name: 'Hello world',
@@ -18,7 +17,7 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
   Registration can only be done once for each device! (Mac + Serial number)
  */
 const registerDevice = async () => {
-  console.log('- RegisterDevice fn - START');
+  console.group('RegisterDevice fn');
   const registrationResponse = await requestAPI(`${XYTE_SERVER}/v1/devices`, {
     method: 'POST',
     headers: {
@@ -27,34 +26,40 @@ const registerDevice = async () => {
     },
     body: REGISTRATION_PAYLOAD,
   });
+  console.log('device registration response:', registrationResponse);
 
-  console.log('* Register device: device registration response:', registrationResponse);
+  if (Boolean(registrationResponse) && Boolean(registrationResponse.id)) {
+    console.log('attempting to save registration response (to storage)');
+    await updateStorage(registrationResponse);
 
-  console.log('* Register device: attempting to save registration response (to storage)');
-  await updateStorage(registrationResponse);
+    console.groupEnd();
+    return registrationResponse;
+  }
 
-  return registrationResponse;
+  console.groupEnd();
+  return null;
 };
 
 const authenticateDevice = async () => {
-  console.log('- AuthenticateDevice fn - START');
+  console.group('AuthenticateDevice fn');
   try {
-    const storedSettings = authenticateDeviceFromStorage(); // retrieved settings from storage and check if device already registered
+    // retrieved settings from storage and check if device already registered
+    const storedSettings = authenticateDeviceFromStorage();
 
     if (Boolean(storedSettings)) {
-      console.log('* AuthenticateDevice fn: validation (from storage) of device SUCCESS');
+      console.log('validation (from storage) of device SUCCESS');
 
       return storedSettings;
     }
+    console.error('validation (from storage) of device FAILED');
 
-    console.error('* AuthenticateDevice fn: validation (from storage) of device FAILED');
-    console.log('* AuthenticateDevice fn: validation (from network) of device SUCCESS');
-
-    return registerDevice(); // attempt to register device with Xyte's servers
+    return registerDevice();
   } catch (registrationError) {
-    console.error('* AuthenticateDevice fn: validation (via network) of device FAILED', registrationError);
+    console.error('validation (via storage & via network) of device FAILED', registrationError);
 
     return null;
+  } finally {
+    console.groupEnd();
   }
 };
 

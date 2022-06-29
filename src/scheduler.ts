@@ -12,7 +12,8 @@ import { INTERVAL_IN_MS, XYTE_SERVER } from './helpers/constants.js';
     4. Checks if there are any license changes required
 */
 const notifyServerLoop = async (deviceId: string, accessKey: string) => {
-  console.log('- NotifyServerLoop fn - START');
+  console.log();
+  console.group('NotifyServerLoop fn');
   // 1. Updates the server with the latest telemetry and use the response from Xyte's servers for the next steps
   const telemetryPayload = JSON.stringify(await getTelemetry());
   const {
@@ -82,6 +83,7 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
       await handleLicense(deviceId, accessKey, license);
     }
   }
+  console.groupEnd();
 
   // finally restart the routine (in 10s)
   setTimeout(async () => await notifyServerLoop(deviceId, accessKey), INTERVAL_IN_MS);

@@ -15,7 +15,7 @@ import requestAPI from './helpers/network.js';
  It will result in the local config being mirrored in the server.
 */
 const evaluateConfigVersion = async (deviceId: string, accessKey: string, serverVersion: string) => {
-  console.log('- EvaluateConfigVersion fn - START');
+  console.group('EvaluateConfigVersion fn');
   const storedConfig = readStorage();
 
   if (!Boolean(storedConfig)) {
@@ -52,6 +52,8 @@ const evaluateConfigVersion = async (deviceId: string, accessKey: string, server
       body: JSON.stringify(newConfig),
     });
   }
+
+  console.groupEnd();
 };
 
 export default evaluateConfigVersion;

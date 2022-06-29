@@ -8,7 +8,7 @@ import requestAPI from './helpers/network.js';
 // 2. Add to stored licenses list
 // 3. Notify server license was activated
 const handleAddLicense = async (deviceId: string, accessKey: string, license: Record<string, any>) => {
-  console.log('- HandleAddLicense fn - START');
+  console.group('HandleAddLicense fn');
 
   await applyLicense(license);
 
@@ -30,6 +30,7 @@ const handleAddLicense = async (deviceId: string, accessKey: string, license: Re
     },
     body: licensePayload,
   });
+  console.groupEnd();
 
   return true;
 };
@@ -39,7 +40,7 @@ const handleAddLicense = async (deviceId: string, accessKey: string, license: Re
 // 2. Remove from stored licenses list
 // 3. Notify server license was removed
 const handleRemoveLicense = async (deviceId: string, accessKey: string, license: Record<string, any>) => {
-  console.log('- HandleRemoveLicense fn - START');
+  console.group('HandleRemoveLicense fn');
 
   await removeLicense(license);
 
@@ -63,13 +64,14 @@ const handleRemoveLicense = async (deviceId: string, accessKey: string, license:
     },
     body: licensePayload,
   });
+  console.groupEnd();
 
   return true;
 };
 
 // For each license, check if it is marked to be added or removed
 const handleLicense = async (deviceId: string, accessKey: string, license: Record<string, any>) => {
-  console.log('- HandleLicense fn - START');
+  console.group('HandleLicense fn');
   if (Boolean(license.add)) {
     const hasAdded = await handleAddLicense(deviceId, accessKey, license);
 
@@ -83,6 +85,7 @@ const handleLicense = async (deviceId: string, accessKey: string, license: Recor
       delete license['remove'];
     }
   }
+  console.groupEnd();
 };
 
 export default handleLicense;
