@@ -6,7 +6,9 @@ node_modules
 
 # npm package lock
 package-lock.json
-yarn.lock
+
+# http requests
+http
 
 # project files
 src
