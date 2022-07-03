@@ -1,6 +1,5 @@
 import { readStorage, setStorage } from './helpers/storage.js';
 import { applyLicense, removeLicense } from './todo.js';
-import { XYTE_SERVER } from './helpers/constants.js';
 import requestAPI from './helpers/network.js';
 
 // License addition has 3 steps:
@@ -21,7 +20,7 @@ const handleAddLicense = async (deviceId: string, accessKey: string, license: Re
     state: 'inuse',
   });
 
-  await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
+  await requestAPI(`${config.hub_url}/v1/devices/${deviceId}/licenses`, {
     method: 'POST',
     headers: {
       'Authorization': accessKey,
@@ -55,7 +54,7 @@ const handleRemoveLicense = async (deviceId: string, accessKey: string, license:
     state: 'removed',
   });
 
-  await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
+  await requestAPI(`${config.hub_url}/v1/devices/${deviceId}/licenses`, {
     method: 'POST',
     headers: {
       'Authorization': accessKey,

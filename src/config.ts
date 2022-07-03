@@ -1,6 +1,5 @@
 import { readStorage, setStorage } from './helpers/storage.js';
 import { updateConfig } from './todo.js';
-import { XYTE_SERVER } from './helpers/constants.js';
 import requestAPI from './helpers/network.js';
 
 /*
@@ -27,7 +26,7 @@ const evaluateConfigVersion = async (deviceId: string, accessKey: string, server
   // check if local configuration is outdated
   if (serverVersion > localVersion) {
     // Get the latest configuration from the server
-    const newConfig = await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/config`, {
+    const newConfig = await requestAPI(`${storedConfig.hub_url}/v1/devices/${deviceId}/config`, {
       method: 'GET',
       headers: {
         'Authorization': accessKey,
@@ -42,7 +41,7 @@ const evaluateConfigVersion = async (deviceId: string, accessKey: string, server
     await setStorage({ ...storedConfig, ...newConfig });
 
     // Update the server with our current configuration
-    await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/config`, {
+    await requestAPI(`${storedConfig.hub_url}/v1/devices/${deviceId}/config`, {
       method: 'POST',
       headers: {
         'Authorization': accessKey,

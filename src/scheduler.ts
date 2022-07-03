@@ -1,8 +1,9 @@
+import { readStorage } from './helpers/storage';
 import { getTelemetry, handleCommand } from './todo.js';
 import evaluateConfigVersion from './config.js';
 import handleLicense from './licenses.js';
 import requestAPI from './helpers/network.js';
-import { INTERVAL_IN_MS, XYTE_SERVER } from './helpers/constants.js';
+import { INTERVAL_IN_MS } from './helpers/constants.js';
 
 /*
   This function runs every INTERVAL_IN_MS milliseconds and:
@@ -14,13 +15,15 @@ import { INTERVAL_IN_MS, XYTE_SERVER } from './helpers/constants.js';
 const notifyServerLoop = async (deviceId: string, accessKey: string) => {
   console.log();
   console.group('NotifyServerLoop fn');
+  const storedConfig = readStorage();
+
   // 1. Updates the server with the latest telemetry and use the response from Xyte's servers for the next steps
   const telemetryPayload = JSON.stringify(await getTelemetry());
   const {
     config_version: configVersion,
     command: commandFlag,
     new_licenses: newLicenses,
-  } = await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/telemetry`, {
+  } = await requestAPI(`${storedConfig.hub_url}/v1/devices/${deviceId}/telemetry`, {
     method: 'POST',
     headers: {
       'Authorization': accessKey,
@@ -36,7 +39,7 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
   // 3. Checks if there are pending commands, and if so, attempt to perform them
   if (Boolean(commandFlag)) {
     // a. query the server for the command
-    const command = await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/command`, {
+    const command = await requestAPI(`${storedConfig.hub_url}/v1/devices/${deviceId}/command`, {
       method: 'GET',
       headers: {
         'Authorization': accessKey,
@@ -53,7 +56,7 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
       message: 'Not important', // a message to describe `failed` status error
     });
 
-    await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/command`, {
+    await requestAPI(`${storedConfig.hub_url}/v1/devices/${deviceId}/command`, {
       method: 'POST',
       headers: {
         'Authorization': accessKey,
@@ -66,7 +69,7 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
 
   // 4. Checks if there are any license changes required
   if (Boolean(newLicenses)) {
-    const licenses = await requestAPI(`${XYTE_SERVER}/v1/devices/${deviceId}/licenses`, {
+    const licenses = await requestAPI(`${storedConfig.hub_url}/v1/devices/${deviceId}/licenses`, {
       method: 'GET',
       headers: {
         'Authorization': accessKey,

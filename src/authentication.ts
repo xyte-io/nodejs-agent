@@ -1,4 +1,10 @@
-import { HARDWARE_KEY, PARTNER_KEY, NANO_ID, FIRMWARE_VERSION, XYTE_SERVER } from './helpers/constants.js';
+import {
+  HARDWARE_KEY,
+  PARTNER_KEY,
+  NANO_ID,
+  FIRMWARE_VERSION,
+  DEVICE_REGISTRATION_SERVER,
+} from './helpers/constants.js';
 import { updateStorage, authenticateDeviceFromStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 
@@ -18,7 +24,7 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
  */
 const registerDevice = async () => {
   console.group('RegisterDevice fn');
-  const registrationResponse = await requestAPI(`${XYTE_SERVER}/v1/devices`, {
+  const registrationResponse = await requestAPI(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
