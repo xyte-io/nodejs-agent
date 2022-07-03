@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/node10/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../lib-node10"
+  },
+  "include": [
+    "../src"
+  ],
+  "exclude": [
+    "../node_modules",
+    "**/__tests__/*"
+  ]
+}

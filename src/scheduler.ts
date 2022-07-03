@@ -1,4 +1,4 @@
-import { readStorage } from './helpers/storage';
+import { readStorage } from './helpers/storage.js';
 import { getTelemetry, handleCommand } from './todo.js';
 import evaluateConfigVersion from './config.js';
 import handleLicense from './licenses.js';

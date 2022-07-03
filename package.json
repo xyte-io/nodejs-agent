@@ -1,12 +1,13 @@
 {
-  "name": "nodejs-agent",
+  "name": "@xyte/nodejs-agent",
   "version": "0.0.1",
-  "description": "Demo implementation of a client accessing Xyte's servers",
+  "description": "Xyte's agent implemented in NodeJS",
   "type": "module",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
   "scripts": {
     "build": "tsc",
+    "bundle-es": "tsc --noEmit && node scripts/build.forever.js && node scripts/build.main.js",
     "format": "prettier --write \"src/**/*.(js|ts)\"",
     "lint": "eslint src --ext .js,.ts",
     "lint:fix": "eslint src --fix --ext .js,.ts",
@@ -18,15 +19,18 @@
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
+    "forever-monitor": "3.0.3",
     "isomorphic-fetch": "3.0.0"
   },
   "devDependencies": {
+    "@tsconfig/node10": "1.0.9",
     "@tsconfig/node18": "1.0.1",
     "@types/isomorphic-fetch": "0.0.36",
     "@types/jest": "28.1.2",
     "@types/node": "18.0.0",
     "@typescript-eslint/eslint-plugin": "5.27.0",
     "@typescript-eslint/parser": "5.27.0",
+    "esbuild": "0.14.47",
     "eslint": "8.17.0",
     "eslint-plugin-prettier": "4.0.0",
     "jest": "28.1.1",

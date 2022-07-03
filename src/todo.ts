@@ -1,5 +1,6 @@
 // This file contains all the functions that should be implemented in a real device
 // They are called automatically by the framework and should return a Promise()
+// returning a value automatically resolves the Promise
 
 export const applyLicense = async (license: any) => {
   console.group('ApplyLicense fn');

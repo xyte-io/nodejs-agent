@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import authenticateDevice from './authentication.js';
 import notifyServerLoop from './scheduler.js';
-import { bootstrap } from './helpers/storage';
+import { bootstrap } from './helpers/storage.js';
 import { INTERVAL_IN_MS, TURNED_OFF_FILE_NAME } from './helpers/constants.js';
 
 // handling termination requests
