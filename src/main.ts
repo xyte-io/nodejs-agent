@@ -5,15 +5,21 @@ import notifyServerLoop from './scheduler.js';
 import { bootstrap } from './helpers/storage';
 import { INTERVAL_IN_MS, TURNED_OFF_FILE_NAME } from './helpers/constants.js';
 
+// handling termination requests
+// other event you might find useful: uncaughtException, unhandledRejection, SIGINT
 process.on('SIGTERM', () => {
   console.group('SIGTERM fn');
-  console.log('acting on SIGTERM');
+  console.log(`Process ${process.pid} received a SIGTERM signal`);
   console.log('Attempting to write graceful shutdown message to', TURNED_OFF_FILE_NAME);
 
   fs.writeFileSync(path.resolve(TURNED_OFF_FILE_NAME), '', 'ascii');
 
   console.groupEnd();
-  process.exit(0);
+
+  // INTERVAL_IN_MS time to resolve what ever promises it has left to resolve
+  setTimeout(() => {
+    process.exit(0);
+  }, INTERVAL_IN_MS).unref(); // Prevents the timeout from registering on event loop
 });
 
 async function main() {
