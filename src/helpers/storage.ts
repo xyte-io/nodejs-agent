@@ -1,6 +1,32 @@
 import * as fs from 'fs';
 import path from 'path';
-import { CONFIG_FILE_NAME } from './constants.js';
+import { CONFIG_FILE_NAME, TURNED_OFF_FILE_NAME, TURNED_ON_FILE_NAME } from './constants.js';
+
+/* this is a mechanism to track graceful terminations */
+export const bootstrap = () => {
+  console.group('bootstrap fn');
+  console.log('Attempting to read & write bootstrap file to storage');
+
+  const hasStarted = fs.existsSync(path.resolve(TURNED_ON_FILE_NAME));
+  const hasGracefulShutdown = fs.existsSync(path.resolve(TURNED_OFF_FILE_NAME));
+
+  try {
+    console.log('Attempting to delete old bootstrap files');
+
+    if (hasStarted) {
+      fs.unlinkSync(path.resolve(TURNED_ON_FILE_NAME));
+    }
+    if (hasGracefulShutdown) {
+      fs.unlinkSync(path.resolve(TURNED_OFF_FILE_NAME));
+    }
+  } catch (error) {
+    console.log('ERROR deleting old bootstrap files');
+    console.error(error);
+  } finally {
+    fs.writeFileSync(path.resolve(TURNED_ON_FILE_NAME), '', 'ascii');
+    console.groupEnd();
+  }
+};
 
 // Read JSON data from file
 export const readStorage = () => {

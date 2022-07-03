@@ -1,11 +1,27 @@
+import fs from 'fs';
+import path from 'path';
 import authenticateDevice from './authentication.js';
 import notifyServerLoop from './scheduler.js';
-import { INTERVAL_IN_MS } from './helpers/constants.js';
+import { bootstrap } from './helpers/storage';
+import { INTERVAL_IN_MS, TURNED_OFF_FILE_NAME } from './helpers/constants.js';
+
+process.on('SIGTERM', () => {
+  console.group('SIGTERM fn');
+  console.log('acting on SIGTERM');
+  console.log('Attempting to write graceful shutdown message to', TURNED_OFF_FILE_NAME);
+
+  fs.writeFileSync(path.resolve(TURNED_OFF_FILE_NAME), '', 'ascii');
+
+  console.groupEnd();
+  process.exit(0);
+});
 
 async function main() {
   console.log('-----------------------------------------------------------------------------------------');
   console.group('Main fn');
   try {
+    bootstrap();
+
     const authConfig = await authenticateDevice();
 
     if (!authConfig) {

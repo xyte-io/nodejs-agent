@@ -3,5 +3,7 @@ export const PARTNER_KEY = '122331231231123';
 export const NANO_ID = '123412341234';
 export const FIRMWARE_VERSION = '1.0.0';
 export const CONFIG_FILE_NAME = 'config.txt';
+export const TURNED_ON_FILE_NAME = 'TURNED_ON_OK.txt';
+export const TURNED_OFF_FILE_NAME = 'TURNED_OFF_OK.txt';
 export const XYTE_SERVER = 'https://hub.xyte.io';
 export const INTERVAL_IN_MS = 10 * 1000; // How often to send telemetry (in milliseconds)
