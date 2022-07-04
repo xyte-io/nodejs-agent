@@ -1,4 +1,4 @@
-import { readStorage, setStorage } from './helpers/storage.js';
+import { readConfigFromStorage, setConfigToStorage } from './helpers/storage.js';
 import { applyLicense, removeLicense } from './todo.js';
 import requestAPI from './helpers/network.js';
 
@@ -11,8 +11,8 @@ const handleAddLicense = async (deviceId: string, accessKey: string, license: Re
 
   await applyLicense(license);
 
-  const config = readStorage();
-  await setStorage({ ...config, licenses: [...((config && config.licenses) || []), license] });
+  const config = readConfigFromStorage();
+  await setConfigToStorage({ ...config, licenses: [...((config && config.licenses) || []), license] });
 
   // Update the server on the state of the license
   const licensePayload = JSON.stringify({
@@ -43,10 +43,10 @@ const handleRemoveLicense = async (deviceId: string, accessKey: string, license:
 
   await removeLicense(license);
 
-  const config = readStorage();
+  const config = readConfigFromStorage();
   const newLicensesList = ((config && config.licenses) || []).filter((item: typeof license) => item.id !== license.id);
 
-  await setStorage({ ...config, licenses: newLicensesList });
+  await setConfigToStorage({ ...config, licenses: newLicensesList });
 
   // Update the server on the state of the license
   const licensePayload = JSON.stringify({

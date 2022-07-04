@@ -1,4 +1,4 @@
-import { readStorage, setStorage } from './helpers/storage.js';
+import { readConfigFromStorage, setConfigToStorage } from './helpers/storage.js';
 import { updateConfig } from './todo.js';
 import requestAPI from './helpers/network.js';
 
@@ -15,7 +15,7 @@ import requestAPI from './helpers/network.js';
 */
 const evaluateConfigVersion = async (deviceId: string, accessKey: string, serverVersion: string) => {
   console.group('EvaluateConfigVersion fn');
-  const storedConfig = readStorage();
+  const storedConfig = readConfigFromStorage();
 
   if (!Boolean(storedConfig)) {
     throw new Error('checkConfigVersion: unable to retrieve version from storage, ');
@@ -38,7 +38,7 @@ const evaluateConfigVersion = async (deviceId: string, accessKey: string, server
     await updateConfig(newConfig);
 
     // merge the new config with existing settings in device storage
-    await setStorage({ ...storedConfig, ...newConfig });
+    await setConfigToStorage({ ...storedConfig, ...newConfig });
 
     // Update the server with our current configuration
     await requestAPI(`${storedConfig.hub_url}/v1/devices/${deviceId}/config`, {

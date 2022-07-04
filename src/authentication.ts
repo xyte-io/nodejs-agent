@@ -5,7 +5,7 @@ import {
   FIRMWARE_VERSION,
   DEVICE_REGISTRATION_SERVER,
 } from './helpers/constants.js';
-import { updateStorage, authenticateDeviceFromStorage } from './helpers/storage.js';
+import { updateConfigInStorage, authenticateDeviceFromStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 
 const REGISTRATION_PAYLOAD = JSON.stringify({
@@ -36,7 +36,7 @@ const registerDevice = async () => {
 
   if (Boolean(registrationResponse) && Boolean(registrationResponse.id)) {
     console.log('attempting to save registration response (to storage)');
-    await updateStorage(registrationResponse);
+    await updateConfigInStorage(registrationResponse);
 
     console.groupEnd();
     return registrationResponse;

@@ -28,8 +28,8 @@ export const bootstrap = () => {
   }
 };
 
-// Read JSON data from file
-export const readStorage = () => {
+// Read config JSON data from file
+export const readConfigFromStorage = () => {
   console.group('ReadStorage fn');
   const storage =
     fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
@@ -44,8 +44,8 @@ export const readStorage = () => {
   console.groupEnd();
 };
 
-// Replace JSON data in file
-export const setStorage = (payload: any) => {
+// Replace config JSON data in file
+export const setConfigToStorage = (payload: any) => {
   console.group('SetStorage fn');
   console.log('Attempting to write config file to storage');
 
@@ -53,12 +53,12 @@ export const setStorage = (payload: any) => {
   console.groupEnd();
 };
 
-// Merge JSON data with one saved in the file
-export const updateStorage = async (payload: Record<string, any>) => {
+// Merge config JSON data with one saved in the file
+export const updateConfigInStorage = async (payload: Record<string, any>) => {
   console.group('UpdateStorage fn');
   console.log('Attempting to update config file');
 
-  setStorage({ ...readStorage(), ...payload });
+  setConfigToStorage({ ...readConfigFromStorage(), ...payload });
   console.groupEnd();
 };
 
@@ -66,7 +66,7 @@ export const updateStorage = async (payload: Record<string, any>) => {
 export const authenticateDeviceFromStorage = () => {
   console.group('AuthenticateDeviceFromStorage fn');
   console.log('Attempting to retrieve config file from storage');
-  const storedSettings = readStorage();
+  const storedSettings = readConfigFromStorage();
 
   if (Boolean(storedSettings) && Boolean(storedSettings.id)) {
     console.log('Retrieved config file from storage');

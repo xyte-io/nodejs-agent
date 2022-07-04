@@ -1,5 +1,5 @@
-import { readStorage } from './helpers/storage.js';
-import { getTelemetry, handleCommand } from './todo.js';
+import { readConfigFromStorage } from './helpers/storage.js';
+import { getTelemetry } from './todo.js';
 import evaluateConfigVersion from './config.js';
 import handleLicense from './licenses.js';
 import requestAPI from './helpers/network.js';
@@ -15,7 +15,7 @@ import { INTERVAL_IN_MS } from './helpers/constants.js';
 const notifyServerLoop = async (deviceId: string, accessKey: string) => {
   console.log();
   console.group('NotifyServerLoop fn');
-  const storedConfig = readStorage();
+  const storedConfig = readConfigFromStorage();
 
   // 1. Updates the server with the latest telemetry and use the response from Xyte's servers for the next steps
   const telemetryPayload = JSON.stringify(await getTelemetry());
