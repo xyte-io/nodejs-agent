@@ -1,5 +1,5 @@
-import { readConfigFromStorage, setConfigToStorage } from './helpers/storage.js';
 import { applyLicense, removeLicense } from './todo.js';
+import { readConfigFromStorage, setConfigToStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 
 // License addition has 3 steps:

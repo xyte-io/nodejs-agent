@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import path from 'path';
 import fetch from 'isomorphic-fetch';
-import restart from './restart.js';
 import { revokeDevice } from '../todo.js';
+import restart from './restart.js';
 import { CONFIG_FILE_NAME } from './constants.js';
 
 const requestAPI = async (url: string, requestPayload: any) => {

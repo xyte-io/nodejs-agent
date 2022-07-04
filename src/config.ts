@@ -1,5 +1,5 @@
-import { readConfigFromStorage, setConfigToStorage } from './helpers/storage.js';
 import { updateConfig } from './todo.js';
+import { readConfigFromStorage, setConfigToStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 
 /*

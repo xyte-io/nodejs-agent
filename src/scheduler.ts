@@ -1,7 +1,7 @@
-import { readConfigFromStorage } from './helpers/storage.js';
 import { getTelemetry } from './todo.js';
 import evaluateConfigVersion from './config.js';
 import handleLicense from './licenses.js';
+import { readConfigFromStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 import { INTERVAL_IN_MS } from './helpers/constants.js';
 
