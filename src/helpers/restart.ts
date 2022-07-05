@@ -1,6 +1,6 @@
 const restart = () => {
   console.log('Restart fn - attempting exit');
-  process.exit(); // we exit the process as pm2 is responsible to restart it
+  process.kill(process.pid, 'SIGTERM'); // we exit the process as forever-monitor is responsible to restart it
   return;
 };
 
