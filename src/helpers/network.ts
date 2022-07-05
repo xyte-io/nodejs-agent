@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import path from 'path';
 import fetch from 'isomorphic-fetch';
 import { revokeDevice } from '../todo.js';
@@ -28,8 +28,10 @@ const requestAPI = async (url: string, requestPayload: any) => {
     }
   }
 
+  const response = await rawResponse.json();
   console.groupEnd();
-  return await rawResponse.json();
+
+  return response;
 };
 
 export default requestAPI;
