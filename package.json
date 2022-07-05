@@ -1,5 +1,5 @@
 {
-  "name": "@xyte/nodejs-agent",
+  "name": "@xyte-io/nodejs-agent",
   "version": "0.0.1",
   "description": "Xyte's agent implemented in NodeJS",
   "type": "module",
