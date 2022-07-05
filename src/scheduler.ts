@@ -1,5 +1,6 @@
 import { getTelemetry } from './todo.js';
 import evaluateConfigVersion from './config.js';
+import handleCommand from './command.js';
 import handleLicense from './licenses.js';
 import { readConfigFromStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
@@ -49,22 +50,6 @@ const notifyServerLoop = async (deviceId: string, accessKey: string) => {
 
     // b. Perform the command on the device
     await handleCommand(command);
-
-    // c. Update the server of the command execution status (done / in_progress / failed)
-    const commandStatusPayload = JSON.stringify({
-      status: 'done', // other possible values are: `in_progress`, `failed`
-      message: 'Not important', // a message to describe `failed` status error
-    });
-
-    await requestAPI(`${storedConfig.hub_url}/v1/devices/${deviceId}/command`, {
-      method: 'POST',
-      headers: {
-        'Authorization': accessKey,
-        'Content-Type': 'application/json',
-        'Content-Length': `${commandStatusPayload.length}`,
-      },
-      body: commandStatusPayload,
-    });
   }
 
   // 4. Checks if there are any license changes required

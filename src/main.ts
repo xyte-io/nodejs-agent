@@ -1,8 +1,6 @@
-import fs from 'fs';
-import path from 'path';
 import authenticateDevice from './authentication.js';
 import notifyServerLoop from './scheduler.js';
-import { bootstrap } from './helpers/storage.js';
+import { setShutdownToStorage } from './helpers/storage.js';
 import { INTERVAL_IN_MS, TURNED_OFF_FILE_NAME } from './helpers/constants.js';
 
 // handling termination requests
@@ -12,22 +10,15 @@ process.on('SIGTERM', () => {
   console.log(`Process ${process.pid} received a SIGTERM signal`);
   console.log('Attempting to write graceful shutdown message to', TURNED_OFF_FILE_NAME);
 
-  fs.writeFileSync(path.resolve(TURNED_OFF_FILE_NAME), '', 'ascii');
+  setShutdownToStorage();
 
   console.groupEnd();
-
-  // INTERVAL_IN_MS time to resolve what ever promises it has left to resolve
-  setTimeout(() => {
-    process.exit(0);
-  }, INTERVAL_IN_MS).unref(); // Prevents the timeout from registering on event loop
 });
 
 async function main() {
   console.log('-----------------------------------------------------------------------------------------');
   console.group('Main fn');
   try {
-    bootstrap();
-
     const authConfig = await authenticateDevice();
 
     if (!authConfig) {

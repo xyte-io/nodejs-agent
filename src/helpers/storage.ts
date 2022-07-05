@@ -1,36 +1,53 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import path from 'path';
-import { CONFIG_FILE_NAME, TURNED_OFF_FILE_NAME, TURNED_ON_FILE_NAME } from './constants.js';
+import {
+  COMMAND_FILE_NAME,
+  CONFIG_FILE_NAME,
+  ERR_LOG_FILE,
+  FIRMWARE_FILE_NAME,
+  STD_LOG_FILE,
+  TURNED_OFF_FILE_NAME,
+} from './constants.js';
 
 /* this is a mechanism to track graceful terminations */
-export const bootstrap = () => {
-  console.group('bootstrap fn');
-  console.log('Attempting to read & write bootstrap file to storage');
+export const setShutdownToStorage = () => fs.writeFileSync(path.resolve(TURNED_OFF_FILE_NAME), '', 'ascii');
+export const removeShutdownFromStorage = () => fs.unlinkSync(path.resolve(TURNED_OFF_FILE_NAME));
+export const hasGracefulShutdown = () => Boolean(fs.existsSync(path.resolve(TURNED_OFF_FILE_NAME)));
 
-  const hasStarted = fs.existsSync(path.resolve(TURNED_ON_FILE_NAME));
-  const hasGracefulShutdown = fs.existsSync(path.resolve(TURNED_OFF_FILE_NAME));
+export const setFirmwareToStorage = (payload: any) =>
+  fs.writeFileSync(path.resolve(FIRMWARE_FILE_NAME), JSON.stringify(payload), 'ascii');
 
-  try {
-    console.log('Attempting to delete old bootstrap files');
+export const readStdLogFromStorage = () =>
+  fs.existsSync(path.resolve(STD_LOG_FILE)) && fs.readFileSync(path.resolve(STD_LOG_FILE), 'ascii');
+export const readErrLogFromStorage = () =>
+  fs.existsSync(path.resolve(ERR_LOG_FILE)) && fs.readFileSync(path.resolve(ERR_LOG_FILE), 'ascii');
 
-    if (hasStarted) {
-      fs.unlinkSync(path.resolve(TURNED_ON_FILE_NAME));
-    }
-    if (hasGracefulShutdown) {
-      fs.unlinkSync(path.resolve(TURNED_OFF_FILE_NAME));
-    }
-  } catch (error) {
-    console.log('ERROR deleting old bootstrap files');
-    console.error(error);
-  } finally {
-    fs.writeFileSync(path.resolve(TURNED_ON_FILE_NAME), '', 'ascii');
-    console.groupEnd();
-  }
+/* this is part of a mechanism to track command execution during graceful terminations */
+export const logCommandToStorage = (commandInfo: any) => {
+  console.group('logCommandToStorage fn');
+  console.log('Attempting to log command info to file storage');
+
+  fs.writeFileSync(path.resolve(COMMAND_FILE_NAME), JSON.stringify(commandInfo), 'ascii');
+
+  console.groupEnd();
 };
+
+/* this is part of a mechanism to track command execution during graceful terminations */
+export const clearCommandLogFromStorage = () => {
+  console.group('clearCommandLogFromStorage fn');
+  console.log('Attempting to clear log command from file storage');
+
+  fs.existsSync(path.resolve(COMMAND_FILE_NAME)) && fs.unlinkSync(path.resolve(COMMAND_FILE_NAME));
+
+  console.groupEnd();
+};
+export const getCommandFromStorage = () =>
+  Boolean(fs.existsSync(path.resolve(COMMAND_FILE_NAME))) &&
+  JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
 
 // Read config JSON data from file
 export const readConfigFromStorage = () => {
-  console.group('ReadStorage fn');
+  console.group('readConfigFromStorage fn');
   const storage =
     fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
     JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
@@ -46,7 +63,7 @@ export const readConfigFromStorage = () => {
 
 // Replace config JSON data in file
 export const setConfigToStorage = (payload: any) => {
-  console.group('SetStorage fn');
+  console.group('setConfigToStorage fn');
   console.log('Attempting to write config file to storage');
 
   fs.writeFileSync(path.resolve(CONFIG_FILE_NAME), JSON.stringify(payload), 'ascii');
@@ -55,7 +72,7 @@ export const setConfigToStorage = (payload: any) => {
 
 // Merge config JSON data with one saved in the file
 export const updateConfigInStorage = async (payload: Record<string, any>) => {
-  console.group('UpdateStorage fn');
+  console.group('updateConfigInStorage fn');
   console.log('Attempting to update config file');
 
   setConfigToStorage({ ...readConfigFromStorage(), ...payload });
