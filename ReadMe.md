@@ -22,6 +22,8 @@
 
 * for envs like `nw.js` use `dist/nw.js.index.html` file and consult the docs of your provider on how to load them.
 * this code was tested with NodeJS@18 but may run on older versions.
+* please note that `dist/node-agent-starter.min.js` is an auxiliary script, you may run `dist/node-agent-main.min.js`
+  directly and ensuring that a given script runs continuously using your preferred tools.
 
 ## Reference Code
 
