@@ -1,17 +1,10 @@
-import {
-  HARDWARE_KEY,
-  PARTNER_KEY,
-  NANO_ID,
-  FIRMWARE_VERSION,
-  DEVICE_REGISTRATION_SERVER,
-} from './helpers/constants.js';
+import { HARDWARE_KEY, NANO_ID, FIRMWARE_VERSION, DEVICE_REGISTRATION_SERVER } from './helpers/constants.js';
 import { updateConfigInStorage, authenticateDeviceFromStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 
 const REGISTRATION_PAYLOAD = JSON.stringify({
   nano_id: NANO_ID,
   hardware_key: HARDWARE_KEY,
-  partner_key: PARTNER_KEY,
   firmware_version: FIRMWARE_VERSION,
   name: 'Hello world',
 });
