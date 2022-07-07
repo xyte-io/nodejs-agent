@@ -6,7 +6,6 @@
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
   "scripts": {
-    "preinstall": "npx npm-force-resolutions",
     "build": "tsc",
     "bundle-es": "tsc --noEmit && node scripts/build.forever.js && node scripts/build.main.js",
     "format": "prettier --write \"src/**/*.(js|ts)\"",
@@ -18,9 +17,6 @@
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
-  },
-  "resolutions": {
-    "glob-parent": "^6.0.1"
   },
   "dependencies": {
     "forever-monitor": "3.0.3",
