@@ -5,6 +5,6 @@ buildSync({
   bundle: true,
   platform: 'node',
   target: ['node10.0.0'],
-  minify: false,
+  minify: true,
   outfile: './dist/node-agent-starter.min.js',
 });
