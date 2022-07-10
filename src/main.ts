@@ -1,19 +1,6 @@
 import authenticateDevice from './authentication.js';
 import notifyServerLoop from './scheduler.js';
-import { setShutdownToStorage } from './helpers/storage.js';
-import { INTERVAL_IN_MS, TURNED_OFF_FILE_NAME } from './helpers/constants.js';
-
-// handling termination requests
-// other event you might find useful: uncaughtException, unhandledRejection, SIGINT
-process.on('SIGTERM', () => {
-  console.group('SIGTERM fn');
-  console.log(`Process ${process.pid} received a SIGTERM signal`);
-  console.log('Attempting to write graceful shutdown message to', TURNED_OFF_FILE_NAME);
-
-  setShutdownToStorage();
-
-  console.groupEnd();
-});
+import { INTERVAL_IN_MS } from './helpers/constants.js';
 
 async function main() {
   console.log('-----------------------------------------------------------------------------------------');
@@ -36,9 +23,4 @@ async function main() {
   }
 }
 
-// program starts here:
-(async () => {
-  console.log('-----------------------------------------------------------------------------------------');
-  console.log('Starting Xyte`s agent');
-  await main();
-})();
+export default main;

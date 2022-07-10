@@ -18,9 +18,9 @@ export const setFirmwareToStorage = (payload: any) =>
   fs.writeFileSync(path.resolve(FIRMWARE_FILE_NAME), JSON.stringify(payload), 'ascii');
 
 export const readStdLogFromStorage = () =>
-  fs.existsSync(path.resolve(STD_LOG_FILE)) && fs.readFileSync(path.resolve(STD_LOG_FILE), 'ascii');
+  Boolean(fs.existsSync(path.resolve(STD_LOG_FILE))) && fs.readFileSync(path.resolve(STD_LOG_FILE), 'ascii');
 export const readErrLogFromStorage = () =>
-  fs.existsSync(path.resolve(ERR_LOG_FILE)) && fs.readFileSync(path.resolve(ERR_LOG_FILE), 'ascii');
+  Boolean(fs.existsSync(path.resolve(ERR_LOG_FILE))) && fs.readFileSync(path.resolve(ERR_LOG_FILE), 'ascii');
 
 /* this is part of a mechanism to track command execution during graceful terminations */
 export const logCommandToStorage = (commandInfo: any) => {
@@ -37,7 +37,7 @@ export const clearCommandLogFromStorage = () => {
   console.group('clearCommandLogFromStorage fn');
   console.log('Attempting to clear log command from file storage');
 
-  fs.existsSync(path.resolve(COMMAND_FILE_NAME)) && fs.unlinkSync(path.resolve(COMMAND_FILE_NAME));
+  Boolean(fs.existsSync(path.resolve(COMMAND_FILE_NAME))) && fs.unlinkSync(path.resolve(COMMAND_FILE_NAME));
 
   console.groupEnd();
 };
@@ -49,7 +49,7 @@ export const getCommandFromStorage = () =>
 export const readConfigFromStorage = () => {
   console.group('readConfigFromStorage fn');
   const storage =
-    fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
+    Boolean(fs.existsSync(path.resolve(CONFIG_FILE_NAME))) &&
     JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
 
   if (Boolean(storage)) {

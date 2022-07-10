@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import fetch from 'isomorphic-fetch';
+import 'isomorphic-fetch'; //  imported as specified in docs!
 import { revokeDevice } from '../todo.js';
 import restart from './restart.js';
 import { CONFIG_FILE_NAME } from './constants.js';
@@ -10,6 +10,7 @@ const requestAPI = async (url: string, requestPayload: any) => {
   console.log('url:', url);
   console.log('payload:', requestPayload);
 
+  // @ts-ignore ts doesn't recognise fetch as there are no types for it yet :)
   const rawResponse = await fetch(url, requestPayload);
 
   if (rawResponse.status === 401 || rawResponse.status === 403) {

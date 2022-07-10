@@ -1,9 +1,9 @@
 import {
   HARDWARE_KEY,
-  PARTNER_KEY,
   NANO_ID,
   FIRMWARE_VERSION,
   DEVICE_REGISTRATION_SERVER,
+  DEVICE_REGISTRATION_PROXY,
 } from './helpers/constants.js';
 import { updateConfigInStorage, authenticateDeviceFromStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
@@ -11,7 +11,6 @@ import requestAPI from './helpers/network.js';
 const REGISTRATION_PAYLOAD = JSON.stringify({
   nano_id: NANO_ID,
   hardware_key: HARDWARE_KEY,
-  partner_key: PARTNER_KEY,
   firmware_version: FIRMWARE_VERSION,
   name: 'Hello world',
 });
@@ -24,14 +23,27 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
  */
 const registerDevice = async () => {
   console.group('RegisterDevice fn');
-  const registrationResponse = await requestAPI(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': `${REGISTRATION_PAYLOAD.length}`,
-    },
-    body: REGISTRATION_PAYLOAD,
-  });
+  let registrationResponse;
+  try {
+    registrationResponse = await requestAPI(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': `${REGISTRATION_PAYLOAD.length}`,
+      },
+      body: REGISTRATION_PAYLOAD,
+    });
+  } catch (error) {
+    registrationResponse = await requestAPI(`${DEVICE_REGISTRATION_PROXY}/v1/devices`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': `${REGISTRATION_PAYLOAD.length}`,
+      },
+      body: REGISTRATION_PAYLOAD,
+    });
+  }
+
   console.log('device registration response:', registrationResponse);
 
   if (Boolean(registrationResponse) && Boolean(registrationResponse.id)) {

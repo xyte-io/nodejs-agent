@@ -11,6 +11,8 @@
 * download (\ pull repo updates of) this repo and run `npm install`
 * open `src/helpers/constants.ts` and update keys with values generated from Xyte's platform.
 * generate distribution files by running `npm run bundle-es`
+  * you'll have to copy the bundle outside of repo folder if they're bundled for an older node version with no es
+    modules support
 
 ### Executing
 
@@ -29,12 +31,12 @@
 
 * download (\ pull repo updates of) this repo
 * for developers who are familiar with:
-    * TypeScript: navigate to src and start reading from `main.ts`
-    * Modern<sup>*</sup> Javascript: transpiling TS code to JS is needed, which can be achieved by
-      running `npm install && npm run build`
-      * <sup>*</sup>tsc will transpile typescript code to JS targeting NodeJS@18 and latest JS supported code. if
-        you're interested in targeting older NodeJS versions (e.g. for debugging) please refer to the example
-        config `./scripts/tsconfig.node10.json`, and try to run tsc with it to produce the desired target.
+  * TypeScript: navigate to src and start reading from `main.ts`
+  * Modern<sup>*</sup> Javascript: transpiling TS code to JS is needed, which can be achieved by
+    running `npm install && npm run build`
+    * <sup>*</sup>tsc will transpile typescript code to JS targeting NodeJS@18 and latest JS supported code. if
+      you're interested in targeting older NodeJS versions (e.g. for debugging) please refer to the example
+      config `./scripts/tsconfig.node10.json`, and try to run tsc with it to produce the desired target.
 * optional: open `src/helpers/constants.ts` and update keys with values generated from Xyte's platform. (recommended if
   you're planing on running reference code instead of bundled one)
 * you may run reference JS-code by executing: `node lib/main.js`
