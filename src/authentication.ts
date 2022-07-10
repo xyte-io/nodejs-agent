@@ -2,8 +2,8 @@ import {
   HARDWARE_KEY,
   NANO_ID,
   FIRMWARE_VERSION,
-  DEVICE_REGISTRATION_SERVER,
-  DEVICE_REGISTRATION_PROXY,
+  DEVICE_PROVISIONING_SERVER,
+  DEVICE_PROVISIONING_PROXY,
 } from './helpers/constants.js';
 import { updateConfigInStorage, authenticateDeviceFromStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
@@ -15,6 +15,16 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
   name: 'Hello world',
 });
 
+
+const registerDeviceToProvisioningServer = async (url: string) => await requestAPI(`${url}/v1/devices`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Content-Length': `${REGISTRATION_PAYLOAD.length}`,
+  },
+  body: REGISTRATION_PAYLOAD,
+});
+
 /*
   Ask the server to register a device
   Calling the register method returns the id + access key
@@ -22,63 +32,42 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
   Registration can only be done once for each device! (Mac + Serial number)
  */
 const registerDevice = async () => {
-  console.group('RegisterDevice fn');
-  let registrationResponse;
+  console.log('Register device');
+
+  let registrationResponse = null;
+
   try {
-    registrationResponse = await requestAPI(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': `${REGISTRATION_PAYLOAD.length}`,
-      },
-      body: REGISTRATION_PAYLOAD,
-    });
+    registrationResponse = await registerDeviceToProvisioningServer(DEVICE_PROVISIONING_SERVER);
   } catch (error) {
-    registrationResponse = await requestAPI(`${DEVICE_REGISTRATION_PROXY}/v1/devices`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': `${REGISTRATION_PAYLOAD.length}`,
-      },
-      body: REGISTRATION_PAYLOAD,
-    });
+    registrationResponse = await registerDeviceToProvisioningServer(DEVICE_PROVISIONING_PROXY);
   }
 
   console.log('device registration response:', registrationResponse);
 
-  if (Boolean(registrationResponse) && Boolean(registrationResponse.id)) {
-    console.log('attempting to save registration response (to storage)');
+  if (Boolean(registrationResponse?.id)) {
     await updateConfigInStorage(registrationResponse);
-
-    console.groupEnd();
-    return registrationResponse;
   }
 
-  console.groupEnd();
-  return null;
+  return registrationResponse;
 };
 
 const authenticateDevice = async () => {
-  console.group('AuthenticateDevice fn');
   try {
-    // retrieved settings from storage and check if device already registered
+    // Check if device was already registered
     const storedSettings = authenticateDeviceFromStorage();
 
     if (Boolean(storedSettings)) {
-      console.log('validation (from storage) of device SUCCESS');
+      console.log('Device already registered - using existing credentials');
 
       return storedSettings;
     }
-    console.error('validation (from storage) of device FAILED');
-
     return registerDevice();
+    
   } catch (registrationError) {
-    console.error('validation (via storage & via network) of device FAILED', registrationError);
+    console.error('Get authentication info failed', registrationError);
 
     return null;
-  } finally {
-    console.groupEnd();
-  }
+  } 
 };
 
 export default authenticateDevice;

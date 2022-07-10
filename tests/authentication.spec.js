@@ -5,7 +5,7 @@ import fetchMock from 'fetch-mock';
 import main from '../src/main';
 import authenticateDevice from '../src/authentication';
 import { authenticateDeviceFromStorage, readConfigFromStorage } from '../src/helpers/storage';
-import { CONFIG_FILE_NAME, DEVICE_REGISTRATION_SERVER } from '../src/helpers/constants';
+import { CONFIG_FILE_NAME, DEVICE_PROVISIONING_SERVER } from '../src/helpers/constants';
 
 const configFileContents =
   '{"id":"12345678-1234-1234-1234-123456789012","access_key":"12345678901234567890123456789012", "hub_url": "https://xyte.io", "hub_url_static_cert": "https://xyte.io"}';
@@ -47,7 +47,7 @@ describe('Authenticate and register device', () => {
       hub_url_static_cert: 'https://xyte.io',
     };
 
-    fetchMock.post(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
+    fetchMock.post(`${DEVICE_PROVISIONING_SERVER}/v1/devices`, {
       status: 201,
       body: JSON.stringify(registrationResponseMock),
     });
@@ -62,7 +62,7 @@ describe('Authenticate and register device', () => {
   });
 
   test('Fail to Authenticate and register', async () => {
-    fetchMock.post(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
+    fetchMock.post(`${DEVICE_PROVISIONING_SERVER}/v1/devices`, {
       status: 422,
       body: JSON.stringify({ error: 'TEST: Nano has already been taken' }),
     });
@@ -71,7 +71,7 @@ describe('Authenticate and register device', () => {
   });
 
   test('Fail to Authenticate and register - and retry! should call setTimeout once', async () => {
-    fetchMock.post(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
+    fetchMock.post(`${DEVICE_PROVISIONING_SERVER}/v1/devices`, {
       status: 422,
       body: JSON.stringify({ error: 'TEST: Nano has already been taken' }),
     });

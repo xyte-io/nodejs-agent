@@ -9,76 +9,54 @@ import {
 } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 
-export const checkSavedCommandAfterBoot = async (command: any) => {
-  const hasFreshBooted = os.uptime() <= 60 * 5; // boot in last 5 minutes
+export const handlePendingCommandAfterReboot = async (authData: any, command: any) => {
+  // TODO Vladimir: Call user's callback to tell him that his command causes restart and what status to return to server (success or error)
+  const { status, message, error } = userGetCommandStatusAfterReboot(command);
 
-  // update Xyte's servers of command execution - only if it's a fresh boot
-  if (hasFreshBooted && command) {
-    const storedConfig = readConfigFromStorage();
+  const commandStatusPayload = JSON.stringify({ id: command.id, status, message, error });
 
-    const commandStatusPayload = JSON.stringify({
-      id: command.id,
-      status: hasGracefulShutdown() ? 'done' : 'failed',
-      message: 'Device booted',
-    });
-
-    await requestAPI(`${storedConfig.hub_url}/v1/devices/${storedConfig.id}/command`, {
-      method: 'POST',
-      headers: {
-        'Authorization': storedConfig.access_key,
-        'Content-Type': 'application/json',
-        'Content-Length': `${commandStatusPayload.length}`,
-      },
-      body: commandStatusPayload,
-    });
-  }
-
-  // remove command log from storage
-  clearCommandLogFromStorage();
-};
-
-const handleCommand = async (command: any) => {
-  console.group('handleCommand fn');
-
-  // check whether command wasn't tried already
-  const storedCommand = getCommandFromStorage();
-  if (storedCommand && storedCommand.id === command.id) {
-    await checkSavedCommandAfterBoot(storedCommand);
-
-    console.groupEnd();
-    return;
-  }
-
-  const storedConfig = readConfigFromStorage();
-  logCommandToStorage(command);
-
-  const commandInProgressPayload = JSON.stringify({ id: command.id, status: 'in_progress' });
-  await requestAPI(`${storedConfig.hub_url}/v1/devices/${storedConfig.id}/command`, {
+  await requestAPI(`${authData.hub_url}/v1/devices/${authData.id}/command`, {
     method: 'POST',
     headers: {
-      'Authorization': storedConfig.access_key,
+      'Authorization': authData.access_key,
+      'Content-Type': 'application/json',
+      'Content-Length': `${commandStatusPayload.length}`
+    },
+    body: commandStatusPayload
+  });
+};
+
+const handleCommand = async (authData: any, command: any) => {
+  // Check if this command is already in progress
+  if (command && command.status === 'in_progress') {
+    return await handlePendingCommandAfterReboot(authData, command);
+  }
+
+  // Update the server that the command is in progress
+  const commandInProgressPayload = JSON.stringify({ id: command.id, status: 'in_progress' });
+  await requestAPI(`${authData.hub_url}/v1/devices/${authData.id}/command`, {
+    method: 'POST',
+    headers: {
+      'Authorization': authData.access_key,
       'Content-Type': 'application/json',
       'Content-Length': `${commandInProgressPayload.length}`,
     },
     body: commandInProgressPayload,
   });
 
-  const commandStatus = await executeCommand(command);
+  const commandStatus = await executeCommand(authData, command);
 
+  // Update the server of command execution status
   const commandStatusPayload = JSON.stringify(commandStatus);
-  await requestAPI(`${storedConfig.hub_url}/v1/devices/${storedConfig.id}/command`, {
+  await requestAPI(`${authData.hub_url}/v1/devices/${authData.id}/command`, {
     method: 'POST',
     headers: {
-      'Authorization': storedConfig.access_key,
+      'Authorization': authData.access_key,
       'Content-Type': 'application/json',
       'Content-Length': `${commandStatusPayload.length}`,
     },
     body: commandStatusPayload,
   });
-
-  clearCommandLogFromStorage();
-
-  console.groupEnd();
 };
 
 export default handleCommand;

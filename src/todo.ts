@@ -38,12 +38,11 @@ export const removeLicense = async (license: any) => {
   }
 };
 
-export const executeCommand = async (command: any) => {
+export const executeCommand = async (authData: any, command: any) => {
   console.group('HandleCommand fn');
   console.log('TODO: Handle command', command);
 
-  const storedConfig = readConfigFromStorage();
-
+  // Handle the command (synchronously)
   try {
     switch (command.name) {
       case 'update_firmware':
@@ -53,38 +52,35 @@ export const executeCommand = async (command: any) => {
         const serverFirmwareVersion = command?.parameters?.version || FIRMWARE_VERSION;
         const deviceFirmwareVersion = FIRMWARE_VERSION;
 
-        if (compareVersions(serverFirmwareVersion, deviceFirmwareVersion)) {
-          const firmwareUrl = command.parameters.url;
-
-          console.log('this is a simple GET to any url, you may want to use Xyte GetFile API');
-          const firmwareFile = await requestAPI(firmwareUrl, {
-            method: 'GET',
-            headers: {
-              'Authorization': storedConfig.access_key,
-              'Content-Type': 'application/json',
-            },
-          });
-
-          // save to disk
-          setFirmwareToStorage(firmwareFile);
-
-          // example for running system command with firmware file,
-          // usually firmware upgrade will cause the device to restart, so you'll have to handle that.
-          // please refer to restart command handling (one of the cases in current switch block) for more information.
-          const hasFirmwareInStorage = execSync('ls').toString().includes(FIRMWARE_FILE_NAME);
-
+        if (serverFirmwareVersion === deviceFirmwareVersion) {
           return {
             id: command.id,
-            status: hasFirmwareInStorage ? 'done' : 'failed',
-            message: `server firmware version: ${serverFirmwareVersion}, device firmware version: ${deviceFirmwareVersion}`,
+            status: 'done',
+            message: `Firmware already up to date, version: ${serverFirmwareVersion}`
           };
         }
+
+        const firmwareUrl = command.parameters.url;
+
+        const firmwareFile = await requestAPI(firmwareUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': authData.access_key,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Save to disk
+        setFirmwareToStorage(firmwareFile);
+
+        // TODO: Perform firmware update
 
         return {
           id: command.id,
           status: 'done',
-          message: `all I know is that: server firmware version (${serverFirmwareVersion}) <= device firmware version (${deviceFirmwareVersion})`,
+          message: `server firmware version: ${serverFirmwareVersion}, device firmware version: ${deviceFirmwareVersion}`,
         };
+
       case 'restart':
         console.log('TODO: Handle restart command');
         console.log('attempting device restart - LINUX ONLY');
@@ -110,11 +106,11 @@ export const executeCommand = async (command: any) => {
         // if we have an error log dump to send - we'll send it
         if (errorLogDump) {
           const dumpId = await requestAPI(
-            `${storedConfig.hub_url}/v1/devices/${storedConfig.id}/dumps/text%2Ftxt/agent.log`,
+            `${authData.hub_url}/v1/devices/${authData.id}/dumps/text%2Ftxt/agent.log`,
             {
               method: 'POST',
               headers: {
-                'Authorization': storedConfig.access_key,
+                'Authorization': authData.access_key,
                 'Content-Type': 'text/plain',
                 'Content-Length': `${errorLogDump.length}`,
               },
@@ -125,10 +121,10 @@ export const executeCommand = async (command: any) => {
           // example for appending a dump to the previous dump
           const standardLogDump = readStdLogFromStorage();
           standardLogDump &&
-            (await requestAPI(`${storedConfig.hub_url}/v1/devices/${storedConfig.id}/dumps/${dumpId}`, {
+            (await requestAPI(`${authData.hub_url}/v1/devices/${authData.id}/dumps/${dumpId}`, {
               method: 'PUT',
               headers: {
-                'Authorization': storedConfig.access_key,
+                'Authorization': authData.access_key,
                 'Content-Type': 'text/plain',
                 'Content-Length': `${standardLogDump.length}`,
               },

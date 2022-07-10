@@ -10,7 +10,11 @@ import {
 } from './constants.js';
 
 /* this is a mechanism to track graceful terminations */
-export const setShutdownToStorage = () => fs.writeFileSync(path.resolve(TURNED_OFF_FILE_NAME), '', 'ascii');
+export const setShutdownToStorage = () => {
+  console.log('Mark safe shutdown: ', TURNED_OFF_FILE_NAME);
+  fs.writeFileSync(path.resolve(TURNED_OFF_FILE_NAME), '', 'ascii');
+}
+
 export const removeShutdownFromStorage = () => fs.unlinkSync(path.resolve(TURNED_OFF_FILE_NAME));
 export const hasGracefulShutdown = () => Boolean(fs.existsSync(path.resolve(TURNED_OFF_FILE_NAME)));
 
@@ -24,12 +28,9 @@ export const readErrLogFromStorage = () =>
 
 /* this is part of a mechanism to track command execution during graceful terminations */
 export const logCommandToStorage = (commandInfo: any) => {
-  console.group('logCommandToStorage fn');
-  console.log('Attempting to log command info to file storage');
+  console.log('Save current command being executed to file');
 
   fs.writeFileSync(path.resolve(COMMAND_FILE_NAME), JSON.stringify(commandInfo), 'ascii');
-
-  console.groupEnd();
 };
 
 /* this is part of a mechanism to track command execution during graceful terminations */
@@ -47,18 +48,11 @@ export const getCommandFromStorage = () =>
 
 // Read config JSON data from file
 export const readConfigFromStorage = () => {
-  console.group('readConfigFromStorage fn');
   const storage =
     Boolean(fs.existsSync(path.resolve(CONFIG_FILE_NAME))) &&
     JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
 
-  if (Boolean(storage)) {
-    console.log('found something in storage');
-
-    console.groupEnd();
-    return storage;
-  }
-  console.groupEnd();
+  return Boolean(storage) ? storage : null;
 };
 
 // Replace config JSON data in file
@@ -72,24 +66,16 @@ export const setConfigToStorage = (payload: any) => {
 
 // Merge config JSON data with one saved in the file
 export const updateConfigInStorage = async (payload: Record<string, any>) => {
-  console.group('updateConfigInStorage fn');
-  console.log('Attempting to update config file');
+  console.log('Save authorization to local storage');
 
   setConfigToStorage({ ...readConfigFromStorage(), ...payload });
-  console.groupEnd();
 };
 
 /* Succeed if stored data has an 'id' property, return an error otherwise */
 export const authenticateDeviceFromStorage = () => {
-  console.group('AuthenticateDeviceFromStorage fn');
-  console.log('Attempting to retrieve config file from storage');
   const storedSettings = readConfigFromStorage();
 
-  if (Boolean(storedSettings) && Boolean(storedSettings.id)) {
-    console.log('Retrieved config file from storage');
+  console.log('Get device authentication data: ', storedSettings);
 
-    console.groupEnd();
-    return storedSettings;
-  }
-  console.groupEnd();
+  return Boolean(storedSettings?.id) ? storedSettings : null;
 };
