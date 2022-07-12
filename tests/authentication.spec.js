@@ -5,14 +5,16 @@ import fetchMock from 'fetch-mock';
 import main from '../src/main';
 import authenticateDevice from '../src/authentication';
 import { authenticateDeviceFromStorage, readConfigFromStorage } from '../src/helpers/storage';
-import { CONFIG_FILE_NAME, DEVICE_REGISTRATION_SERVER } from '../src/helpers/constants';
+import { CONFIG_FILE_NAME, DEVICE_PROVISIONING_SERVER, INITIAL_APP_STATE } from '../src/helpers/constants';
 
 const configFileContents =
-  '{"id":"12345678-1234-1234-1234-123456789012","access_key":"12345678901234567890123456789012", "hub_url": "https://xyte.io", "hub_url_static_cert": "https://xyte.io"}';
+  '{"auth": {"id":"12345678-1234-1234-1234-123456789012","access_key":"12345678901234567890123456789012", "hub_url": "https://xyte.io", "hub_url_static_cert": "https://xyte.io"}}';
 const configFileParsed = JSON.parse(configFileContents);
 
 describe('Authenticate and register device', () => {
   afterEach(() => {
+    applicationState = INITIAL_APP_STATE;
+
     console.log('removing files:', CONFIG_FILE_NAME);
     fs.existsSync(path.resolve(CONFIG_FILE_NAME)) && fs.unlinkSync(path.resolve(CONFIG_FILE_NAME));
 
@@ -27,10 +29,16 @@ describe('Authenticate and register device', () => {
       fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
       JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
 
-    assert.deepEqual(await configStorage, configFileParsed);
-    assert.deepEqual(await readConfigFromStorage(), configFileParsed);
-    assert.deepEqual(await authenticateDeviceFromStorage(), configFileParsed);
-    assert.deepEqual(await authenticateDevice(), configFileParsed);
+    assert.deepEqual((await configStorage).auth, configFileParsed.auth);
+    assert.deepEqual((await readConfigFromStorage()).auth, configFileParsed.auth);
+
+    applicationState = INITIAL_APP_STATE;
+    await authenticateDeviceFromStorage();
+    assert.deepEqual(applicationState.auth, configFileParsed.auth);
+
+    applicationState = INITIAL_APP_STATE;
+    await authenticateDevice();
+    assert.deepEqual(applicationState.auth, configFileParsed.auth);
   });
 
   test('Register device - fail to authenticate from storage and succeed registering (by mock registration response)', async () => {
@@ -47,31 +55,33 @@ describe('Authenticate and register device', () => {
       hub_url_static_cert: 'https://xyte.io',
     };
 
-    fetchMock.post(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
+    fetchMock.post(`${DEVICE_PROVISIONING_SERVER}/v1/devices`, {
       status: 201,
       body: JSON.stringify(registrationResponseMock),
     });
 
-    assert.deepEqual(await authenticateDevice(), registrationResponseMock);
+    await authenticateDevice();
+    assert.deepEqual(applicationState.auth, registrationResponseMock);
 
     const newConfigStorage =
       fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
       JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
 
-    assert.deepEqual(newConfigStorage, registrationResponseMock);
+    assert.deepEqual(newConfigStorage.auth, registrationResponseMock);
   });
 
   test('Fail to Authenticate and register', async () => {
-    fetchMock.post(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
+    fetchMock.post(`${DEVICE_PROVISIONING_SERVER}/v1/devices`, {
       status: 422,
       body: JSON.stringify({ error: 'TEST: Nano has already been taken' }),
     });
 
-    assert.equal(await authenticateDevice(), null);
+    await authenticateDevice();
+    assert.equal(applicationState.auth, null);
   });
 
   test('Fail to Authenticate and register - and retry! should call setTimeout once', async () => {
-    fetchMock.post(`${DEVICE_REGISTRATION_SERVER}/v1/devices`, {
+    fetchMock.post(`${DEVICE_PROVISIONING_SERVER}/v1/devices`, {
       status: 422,
       body: JSON.stringify({ error: 'TEST: Nano has already been taken' }),
     });

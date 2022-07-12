@@ -1,20 +1,14 @@
 import { execSync } from 'child_process';
-import compareVersions from 'compare-versions';
-import {
-  readConfigFromStorage,
-  readErrLogFromStorage,
-  readStdLogFromStorage,
-  removeShutdownFromStorage,
-  setFirmwareToStorage,
-  setShutdownToStorage,
-} from './helpers/storage.js';
+import { readErrLogFromStorage, readStdLogFromStorage, saveFirmwareToStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
-import { FIRMWARE_FILE_NAME, FIRMWARE_VERSION } from './helpers/constants.js';
+import { FIRMWARE_VERSION } from './helpers/constants.js';
+import { getDeviceFirmwareVersion, performFirmwareUpdate } from './helpers/device.js';
+import { Command, Licence } from './helpers/types';
 
 // This file contains all the functions that should be implemented in a real device
 // They are called automatically by the framework
 
-export const applyLicense = async (license: any) => {
+export const applyLicense = async (license: Licence) => {
   console.group('ApplyLicense fn');
   console.log('TODO: Apply new license', license);
   try {
@@ -26,7 +20,7 @@ export const applyLicense = async (license: any) => {
   }
 };
 
-export const removeLicense = async (license: any) => {
+export const removeLicense = async (license: Licence) => {
   console.group('RemoveLicense fn');
   console.log('TODO: Remove existing license', license);
   try {
@@ -38,115 +32,119 @@ export const removeLicense = async (license: any) => {
   }
 };
 
-export const executeCommand = async (command: any) => {
+const executeFirmwareUpgrade = async (command: Command) => {
+  console.log('TODO: Handle update_firmware command');
+  console.log('example firmware version compare, firmware retrieving ');
+
+  const serverFirmwareVersion = command.parameters.version || FIRMWARE_VERSION;
+  const deviceFirmwareVersion = getDeviceFirmwareVersion();
+
+  if (serverFirmwareVersion === deviceFirmwareVersion) {
+    return {
+      id: command.id,
+      status: 'done',
+      message: `Firmware already up to date, version: ${serverFirmwareVersion}`,
+    };
+  }
+
+  const firmwareUrl = command.parameters.url;
+
+  const firmwareFile = await requestAPI(firmwareUrl, {
+    method: 'GET',
+    headers: {
+      'Authorization': applicationState.auth?.access_key,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // Save to disk
+  saveFirmwareToStorage(firmwareFile);
+
+  await performFirmwareUpdate();
+
+  return {
+    id: command.id,
+    status: 'done',
+    message: `server firmware version: ${serverFirmwareVersion}, device firmware version: ${deviceFirmwareVersion}`,
+  };
+};
+
+const executeRestart = async (command: Command) => {
+  console.log('TODO: Handle restart command');
+  console.log('attempting device restart - LINUX ONLY');
+
+  console.log('make sure that you have permissions!');
+  console.log(execSync('/sbin/shutdown -r now'));
+
+  console.log("device should restart immediately, if we've reached this point it didn't");
+  return {
+    id: command.id,
+    status: 'failed', // other possible values are: `in_progress`, `done`
+    message: 'Unable To restart device', // a message to describe `failed` status error
+  };
+};
+
+const executeDump = async (command: Command) => {
+  console.log('TODO: Handle dump command');
+  console.log('attempting device dump - simply sending logs');
+
+  const errorLogDump = readErrLogFromStorage();
+
+  // if we have an error log dump to send - we'll send it
+  if (errorLogDump) {
+    const dumpId = await requestAPI(
+      `${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/dumps/text%2Ftxt/agent.log`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': applicationState.auth?.access_key,
+          'Content-Type': 'text/plain',
+          'Content-Length': `${errorLogDump.length}`,
+        },
+        body: errorLogDump,
+      }
+    );
+
+    // example for appending a dump to the previous dump
+    const standardLogDump = readStdLogFromStorage();
+    standardLogDump &&
+      (await requestAPI(`${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/dumps/${dumpId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': applicationState.auth?.access_key,
+          'Content-Type': 'text/plain',
+          'Content-Length': `${standardLogDump.length}`,
+        },
+        body: standardLogDump,
+      }));
+
+    return {
+      id: command.id,
+      status: 'done',
+      message: 'Successfully uploaded err log file, and appended std log file to it',
+    };
+  }
+
+  return {
+    id: command.id,
+    status: 'done',
+    message: 'probably no dump files to upload',
+  };
+};
+
+export const executeCommand = async (command: Command) => {
   console.group('HandleCommand fn');
   console.log('TODO: Handle command', command);
 
-  const storedConfig = readConfigFromStorage();
-
+  // Handle the command (synchronously)
   try {
     switch (command.name) {
       case 'update_firmware':
-        console.log('TODO: Handle update_firmware command');
-        console.log('example firmware version compare, firmware retrieving ');
-
-        const serverFirmwareVersion = command?.parameters?.version || FIRMWARE_VERSION;
-        const deviceFirmwareVersion = FIRMWARE_VERSION;
-
-        if (compareVersions(serverFirmwareVersion, deviceFirmwareVersion)) {
-          const firmwareUrl = command.parameters.url;
-
-          console.log('this is a simple GET to any url, you may want to use Xyte GetFile API');
-          const firmwareFile = await requestAPI(firmwareUrl, {
-            method: 'GET',
-            headers: {
-              'Authorization': storedConfig.access_key,
-              'Content-Type': 'application/json',
-            },
-          });
-
-          // save to disk
-          setFirmwareToStorage(firmwareFile);
-
-          // example for running system command with firmware file,
-          // usually firmware upgrade will cause the device to restart, so you'll have to handle that.
-          // please refer to restart command handling (one of the cases in current switch block) for more information.
-          const hasFirmwareInStorage = execSync('ls').toString().includes(FIRMWARE_FILE_NAME);
-
-          return {
-            id: command.id,
-            status: hasFirmwareInStorage ? 'done' : 'failed',
-            message: `server firmware version: ${serverFirmwareVersion}, device firmware version: ${deviceFirmwareVersion}`,
-          };
-        }
-
-        return {
-          id: command.id,
-          status: 'done',
-          message: `all I know is that: server firmware version (${serverFirmwareVersion}) <= device firmware version (${deviceFirmwareVersion})`,
-        };
+        return await executeFirmwareUpgrade(command);
       case 'restart':
-        console.log('TODO: Handle restart command');
-        console.log('attempting device restart - LINUX ONLY');
-
-        // this is a planned restart
-        setShutdownToStorage();
-
-        console.log('make sure that you have permissions!');
-        console.log(execSync('/sbin/shutdown -r now'));
-
-        console.log("device should restart immediately, if we've reached this point it didn't");
-        return {
-          id: command.id,
-          status: 'failed', // other possible values are: `in_progress`, `done`
-          message: 'Unable To restart device', // a message to describe `failed` status error
-        };
+        return await executeRestart(command);
       case 'dump':
-        console.log('TODO: Handle dump command');
-        console.log('attempting device dump - simply sending logs');
-
-        const errorLogDump = readErrLogFromStorage();
-
-        // if we have an error log dump to send - we'll send it
-        if (errorLogDump) {
-          const dumpId = await requestAPI(
-            `${storedConfig.hub_url}/v1/devices/${storedConfig.id}/dumps/text%2Ftxt/agent.log`,
-            {
-              method: 'POST',
-              headers: {
-                'Authorization': storedConfig.access_key,
-                'Content-Type': 'text/plain',
-                'Content-Length': `${errorLogDump.length}`,
-              },
-              body: errorLogDump,
-            }
-          );
-
-          // example for appending a dump to the previous dump
-          const standardLogDump = readStdLogFromStorage();
-          standardLogDump &&
-            (await requestAPI(`${storedConfig.hub_url}/v1/devices/${storedConfig.id}/dumps/${dumpId}`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': storedConfig.access_key,
-                'Content-Type': 'text/plain',
-                'Content-Length': `${standardLogDump.length}`,
-              },
-              body: standardLogDump,
-            }));
-
-          return {
-            id: command.id,
-            status: 'done',
-            message: 'Successfully uploaded err log file, and appended std log file to it',
-          };
-        }
-
-        return {
-          id: command.id,
-          status: 'done',
-          message: 'probably no dump files to upload',
-        };
+        return await executeDump(command);
       default:
         console.log('TODO: Handle default command');
 
@@ -166,21 +164,16 @@ export const executeCommand = async (command: any) => {
     };
   } finally {
     console.log("if we've reached this point device didn't shutdown");
-    removeShutdownFromStorage();
-
     console.groupEnd();
   }
 };
 
 export const updateConfig = async (config: any) => {
-  console.group('UpdateConfig fn');
   console.log('TODO: Update device config', config);
   try {
     return;
   } catch (error) {
     throw error;
-  } finally {
-    console.groupEnd();
   }
 };
 
@@ -202,13 +195,10 @@ export const getTelemetry = async () => {
 };
 
 export const revokeDevice = async () => {
-  console.group('RevokeDevice fn');
   console.log('TODO: Handle device revocation upon any network response with status=401,403');
   try {
     return;
   } catch (error) {
     throw error;
-  } finally {
-    console.groupEnd();
   }
 };

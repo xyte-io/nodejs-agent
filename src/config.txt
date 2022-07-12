@@ -1,1 +1,1 @@
-{"id":"a31a9687-b915-4242-944b-1b81de11683c","access_key":"c9370eb00a1fa7baa2d997b4c38782f2","config":{"test":7,"version":7,"last_updated":"2021-03-10T14:42:11.328Z"},"licenses":[{"data":"aaa","signature":"231872f0-6120-436e-afa9-f81b07381a39","id":"f4a65bc2-5616-4fcd-86b9-ce33ffd9bbda"}]}
+{"auth": {"id":"12345678-1234-1234-1234-123456789012","access_key":"12345678901234567890123456789012", "hub_url": "https://xyte.io", "hub_url_static_cert": "https://xyte.io"}}
