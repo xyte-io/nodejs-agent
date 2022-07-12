@@ -14,7 +14,7 @@ The code can be used for reference and sample testing in environments capable of
 * Edit `src/helpers/constants.ts` and update keys with values generated from the Xyte's platform.
 * Open a shell/command-line
 * Run `npm install` to install dependencies
-* Run `npm run bundle-es` to build a distribution
+* Run `npm run bundle` to build a distribution
   * you'll have to copy the bundle outside of repo folder if they're bundled for an older node version with no es
     modules support
 * Copy `dist/node-agent-starter.min.js` and `dist/node-agent-main.min.js` to desired installation folder
