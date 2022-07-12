@@ -1,5 +1,5 @@
 import { updateConfig } from './todo.js';
-import { readConfigFromStorage, setConfigToStorage } from './helpers/storage.js';
+import { setConfigToStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 
 /*
@@ -12,33 +12,36 @@ import requestAPI from './helpers/network.js';
   NOTE: This can be called directly if someone updated the device's configuration locally
         It will result in the local config being mirrored in the server.
 */
-const evaluateConfigVersion = async (authData: any, serverVersion: string) => {
-  const localVersion = authData.config?.version || 0;
+const evaluateConfigVersion = async (serverVersion = 0) => {
+  const localVersion = applicationState.config?.version || 0;
 
   if (serverVersion <= localVersion) {
     return;
   }
 
   // Get the latest configuration from the server
-  const newConfig = await requestAPI(`${authData.hub_url}/v1/devices/${authData.device_id}/config`, {
-    method: 'GET',
-    headers: {
-      'Authorization': authData.accessKey,
-      'Content-Type': 'application/json',
-    },
-  });
+  const newConfig = await requestAPI(
+    `${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/config`,
+    {
+      method: 'GET',
+      headers: {
+        'Authorization': applicationState.auth?.access_key,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
 
   // Update device with the new configuration.
   await updateConfig(newConfig);
-
+  applicationState.config = newConfig;
   // Merge the new config with existing settings in device storage
-  await setConfigToStorage({ ...authData, ...newConfig });
+  setConfigToStorage({ ...applicationState, config: newConfig });
 
   // Update the server with our current configuration
-  await requestAPI(`${authData.hub_url}/v1/devices/${authData.device_id}/config`, {
+  await requestAPI(`${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/config`, {
     method: 'POST',
     headers: {
-      'Authorization': authData.access_key,
+      'Authorization': applicationState.auth?.access_key,
       'Content-Type': 'application/json',
       'Content-Length': `${JSON.stringify(newConfig).length}`,
     },
