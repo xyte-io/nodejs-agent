@@ -2,6 +2,7 @@ import {
   HARDWARE_KEY,
   NANO_ID,
   FIRMWARE_VERSION,
+  DEVICE_NAME,
   DEVICE_PROVISIONING_SERVER,
   DEVICE_PROVISIONING_PROXY,
   INITIAL_APP_STATE,
@@ -14,7 +15,7 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
   nano_id: NANO_ID, // TODO: retrieve real value from xyte app
   hardware_key: HARDWARE_KEY, // TODO: generate a real nano id
   firmware_version: FIRMWARE_VERSION, // TODO: use a real firmware version
-  name: 'Hello world', // TODO: use a real name
+  name: DEVICE_NAME, // TODO: use a real name
 });
 
 const registerDeviceToProvisioningServer = async (url: string): Promise<Auth> =>
@@ -33,7 +34,7 @@ const registerDeviceToProvisioningServer = async (url: string): Promise<Auth> =>
   This auth information must be saved for later use with all API requests
   Registration can only be done once for each device! (Mac + Serial number)
  */
-const registerDevice = async (): Promise<Auth> => {
+const registerDevice = async () => {
   console.log('Register device');
 
   let registrationResponse = null;
@@ -50,8 +51,6 @@ const registerDevice = async (): Promise<Auth> => {
     applicationState = { ...INITIAL_APP_STATE, auth: registrationResponse };
     setConfigToStorage({ ...INITIAL_APP_STATE, auth: registrationResponse });
   }
-
-  return registrationResponse;
 };
 
 const authenticateDevice = async () => {

@@ -7,6 +7,8 @@ export const HARDWARE_KEY = FAKE_HARDWARE_KEY;
 export const NANO_ID = FAKE_NANO_ID;
 console.log('TODO: use a real firmware version');
 export const FIRMWARE_VERSION = '1.0.3';
+console.log('TODO: use a real device name');
+export const DEVICE_NAME = 'Hi, My name is TODO BOM';
 export const CONFIG_FILE_NAME = 'config.txt';
 export const FIRMWARE_FILE_NAME = 'firmware.txt';
 export const STD_LOG_FILE = 'out.log';

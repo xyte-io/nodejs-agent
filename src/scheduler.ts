@@ -17,6 +17,7 @@ const notifyServerLoop = async () => {
   const telemetryPayload = JSON.stringify(await getTelemetry());
 
   if (!applicationState.auth) {
+    throw new Error('Authentication failed');
   }
 
   console.log('Sending telemetry to server: ', telemetryPayload);
