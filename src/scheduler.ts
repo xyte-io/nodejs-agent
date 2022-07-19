@@ -31,7 +31,7 @@ const notifyServerLoop = async () => {
         'Content-Type': 'application/json',
         'Content-Length': `${telemetryPayload.length}`,
       },
-      body: telemetryPayload,
+      body: telemetryPayloadd,
     }
   );
 
