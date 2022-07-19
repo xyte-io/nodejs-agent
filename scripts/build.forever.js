@@ -4,7 +4,7 @@ buildSync({
   entryPoints: ['./scripts/forever.js'],
   bundle: true,
   platform: 'node',
-  target: ['node10.0.0'],
+  target: ['node18.5.0'],
   minify: true,
   outfile: './dist/node-agent-starter.min.js',
 });
