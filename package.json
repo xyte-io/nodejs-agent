@@ -1,6 +1,7 @@
 {
   "name": "@xyte-io/nodejs-agent",
   "version": "0.0.1",
+  "license" : "BSD-0-Clause",
   "description": "Xyte's agent implemented in NodeJS",
   "type": "module",
   "main": "lib/main.js",
