@@ -2,6 +2,7 @@ import {
   HARDWARE_KEY,
   NANO_ID,
   FIRMWARE_VERSION,
+  DEVICE_NAME,
   DEVICE_PROVISIONING_SERVER,
   DEVICE_PROVISIONING_PROXY,
   INITIAL_APP_STATE,
@@ -14,7 +15,7 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
   nano_id: NANO_ID, // TODO: retrieve real value from xyte app
   hardware_key: HARDWARE_KEY, // TODO: generate a real nano id
   firmware_version: FIRMWARE_VERSION, // TODO: use a real firmware version
-  name: 'Hello world', // TODO: use a real name
+  name: DEVICE_NAME, // TODO: use a real name
 });
 
 const registerDeviceToProvisioningServer = async (url: string): Promise<Auth> =>
