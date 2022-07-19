@@ -33,7 +33,7 @@ const registerDeviceToProvisioningServer = async (url: string): Promise<Auth> =>
   This auth information must be saved for later use with all API requests
   Registration can only be done once for each device! (Mac + Serial number)
  */
-const registerDevice = async (): Promise<Auth> => {
+const registerDevice = async () => {
   console.log('Register device');
 
   let registrationResponse = null;
@@ -50,8 +50,6 @@ const registerDevice = async (): Promise<Auth> => {
     applicationState = { ...INITIAL_APP_STATE, auth: registrationResponse };
     setConfigToStorage({ ...INITIAL_APP_STATE, auth: registrationResponse });
   }
-
-  return registrationResponse;
 };
 
 const authenticateDevice = async () => {
