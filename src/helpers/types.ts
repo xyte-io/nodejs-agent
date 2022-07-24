@@ -1,3 +1,5 @@
+/* eslint-disable no-var */
+
 export type Auth = Record<'id' | 'access_key' | 'hub_url' | 'hub_url_static_cert', string> | null;
 export type Config = ({ version: number; last_updated: string } & Record<string, any>) | null;
 export type Licence = {
@@ -18,3 +20,9 @@ export type Command = {
 };
 
 export type State = Record<'auth', Auth> & Record<'config', Config> & Record<'licenses', Array<Licence>>;
+
+declare global {
+  var applicationState: State;
+}
+
+export default global;

@@ -1,14 +1,15 @@
 {
   "name": "@xyte-io/nodejs-agent",
   "version": "0.0.1",
-  "license" : "BSD-0-Clause",
+  "license": "BSD-0-Clause",
   "description": "Xyte's agent implemented in NodeJS",
   "type": "module",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
   "scripts": {
     "build": "tsc",
-    "run-js": "tsc && node ./lib/init.js",
+    "dev": "ts-node --esm ./src/init",
+    "dev:js": "tsc && node ./lib/init.js",
     "bundle": "tsc --noEmit && node scripts/build.forever.js && node scripts/build.main.js",
     "format": "prettier --write \"src/**/*.(js|ts)\"",
     "lint": "eslint src --ext .js,.ts",
@@ -42,6 +43,7 @@
     "fetch-mock": "9.11.0",
     "lint-staged": "13.0.2",
     "prettier": "2.7.1",
+    "ts-node": "10.9.1",
     "typescript": "4.7.4",
     "vite": "2.9.13",
     "vitest": "0.17.0"

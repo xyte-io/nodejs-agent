@@ -2,7 +2,7 @@ import authenticateDevice from './authentication.js';
 import notifyServerLoop from './scheduler.js';
 import { INITIAL_APP_STATE, INTERVAL_IN_MS } from './helpers/constants.js';
 
-global.applicationState = INITIAL_APP_STATE;
+globalThis.applicationState = INITIAL_APP_STATE;
 
 async function main() {
   try {
