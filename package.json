@@ -11,6 +11,7 @@
     "dev": "ts-node --esm ./src/init",
     "dev:js": "tsc && node ./lib/init.js",
     "bundle": "tsc --noEmit && node scripts/build.forever.js && node scripts/build.main.js",
+    "bundle:node10": "tsc --noEmit && node scripts/node10/build.forever.js && node scripts/node10/build.main.js",
     "format": "prettier --write \"src/**/*.(js|ts)\"",
     "lint": "eslint src --ext .js,.ts",
     "lint:fix": "eslint src --fix --ext .js,.ts",
