@@ -2,7 +2,7 @@
 
 export type Auth = Record<'id' | 'access_key' | 'hub_url' | 'hub_url_static_cert', string> | null;
 export type Config = ({ version: number; last_updated: string } & Record<string, unknown>) | null;
-export type Licence = {
+export type License = {
   id: string;
   data: string;
   signature: string;
@@ -19,7 +19,7 @@ export type Command = {
   message?: string;
 };
 
-export type State = Record<'auth', Auth> & Record<'config', Config> & Record<'licenses', Array<Licence>>;
+export type State = Record<'auth', Auth> & Record<'config', Config> & Record<'licenses', Array<License>>;
 
 declare global {
   var applicationState: State;

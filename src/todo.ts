@@ -3,12 +3,12 @@ import { readErrLogFromStorage, readStdLogFromStorage, saveFirmwareToStorage } f
 import requestAPI from './helpers/network.js';
 import { FIRMWARE_VERSION } from './helpers/constants.js';
 import { getDeviceFirmwareVersion, performFirmwareUpdate } from './helpers/device.js';
-import { Command, Config, Licence } from './helpers/types';
+import { Command, Config, License } from './helpers/types';
 
 // This file contains all the functions that should be implemented in a real device
 // They are called automatically by the framework
 
-export const applyLicense = async (license: Licence) => {
+export const applyLicense = async (license: License) => {
   console.group('ApplyLicense fn');
   console.log('TODO: Apply new license', license);
   try {
@@ -20,7 +20,7 @@ export const applyLicense = async (license: Licence) => {
   }
 };
 
-export const removeLicense = async (license: Licence) => {
+export const removeLicense = async (license: License) => {
   console.group('RemoveLicense fn');
   console.log('TODO: Remove existing license', license);
   try {
