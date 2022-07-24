@@ -141,7 +141,7 @@ export const executeCommand = async (command: Command) => {
     switch (command.name) {
       case 'update_firmware':
         return await executeFirmwareUpgrade(command);
-      case 'restart':
+      case 'reboot':
         return await executeRestart(command);
       case 'dump':
         return await executeDump(command);
