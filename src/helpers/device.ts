@@ -10,8 +10,3 @@ export const performFirmwareUpdate = async () => {
   console.log("TODO: handle firmware update using the file you've saved to disk");
   return;
 };
-
-export const getCommandStatusAfterReboot = (command: Command) => {
-  console.log('TODO: handle device reboot status');
-  return { status: 'done', message: 'Device restart OK', error: '' };
-};
