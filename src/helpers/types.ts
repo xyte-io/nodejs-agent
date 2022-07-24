@@ -1,7 +1,7 @@
 /* eslint-disable no-var */
 
 export type Auth = Record<'id' | 'access_key' | 'hub_url' | 'hub_url_static_cert', string> | null;
-export type Config = ({ version: number; last_updated: string } & Record<string, any>) | null;
+export type Config = ({ version: number; last_updated: string } & Record<string, unknown>) | null;
 export type Licence = {
   id: string;
   data: string;
@@ -15,7 +15,7 @@ export type Command = {
   id: string;
   status: 'done' | 'failed' | 'pending' | 'in_progress';
   name: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   message?: string;
 };
 

@@ -3,7 +3,7 @@ import path from 'path';
 import { CONFIG_FILE_NAME, ERR_LOG_FILE, FIRMWARE_FILE_NAME, INITIAL_APP_STATE, STD_LOG_FILE } from './constants.js';
 import { State } from './types';
 
-export const saveFirmwareToStorage = (payload: any) =>
+export const saveFirmwareToStorage = (payload: unknown) =>
   fs.writeFileSync(path.resolve(FIRMWARE_FILE_NAME), JSON.stringify(payload), 'ascii');
 
 export const readStdLogFromStorage = () =>

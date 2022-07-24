@@ -1,6 +1,7 @@
 import { updateConfig } from './todo.js';
 import { setConfigToStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
+import { Config } from './helpers/types';
 
 /*
   Compare the server's configuration version to the one we have locally, if the server's is higher - update the local configuration.
@@ -20,7 +21,7 @@ const evaluateConfigVersion = async (serverVersion = 0) => {
   }
 
   // Get the latest configuration from the server
-  const newConfig = await requestAPI(
+  const newConfig: Config = await requestAPI(
     `${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/config`,
     {
       method: 'GET',
