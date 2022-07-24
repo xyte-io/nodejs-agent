@@ -1,6 +1,8 @@
 import authenticateDevice from './authentication.js';
 import notifyServerLoop from './scheduler.js';
 import { INITIAL_APP_STATE, INTERVAL_IN_MS } from './helpers/constants.js';
+import { mqttClient } from './helpers/mqtt.js';
+import { listenToMessages } from './mqtt-subscriber.js';
 
 global.applicationState = INITIAL_APP_STATE;
 
@@ -11,6 +13,9 @@ async function main() {
     if (!applicationState.auth) {
       throw new Error('Authentication failed');
     }
+
+    mqttClient.connect(applicationState.auth.mqtt_hub_url, applicationState.auth.id, applicationState.auth.access_key);
+    listenToMessages();
 
     await notifyServerLoop();
   } catch (error) {

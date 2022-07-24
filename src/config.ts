@@ -1,6 +1,9 @@
 import { updateConfig } from './todo.js';
 import { setConfigToStorage } from './helpers/storage.js';
-import requestAPI from './helpers/network.js';
+import { Config } from './helpers/types';
+import { mqttClient } from './helpers/mqtt.js';
+
+export const isConfigMessage = (topic: string) => /v1\/device\/.*\/config/.test(topic);
 
 /*
   Compare the server's configuration version to the one we have locally, if the server's is higher - update the local configuration.
@@ -12,41 +15,23 @@ import requestAPI from './helpers/network.js';
   NOTE: This can be called directly if someone updated the device's configuration locally
         It will result in the local config being mirrored in the server.
 */
-const evaluateConfigVersion = async (serverVersion = 0) => {
+export const onConfigMessage = async (newConfig: Config, responseTopic: string) => {
   const localVersion = applicationState.config?.version || 0;
 
-  if (serverVersion <= localVersion) {
+  if (newConfig!.version <= localVersion) {
     return;
   }
-
-  // Get the latest configuration from the server
-  const newConfig = await requestAPI(
-    `${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/config`,
-    {
-      method: 'GET',
-      headers: {
-        'Authorization': applicationState.auth?.access_key,
-        'Content-Type': 'application/json',
-      },
-    }
-  );
 
   // Update device with the new configuration.
   await updateConfig(newConfig);
   applicationState.config = newConfig;
+
   // Merge the new config with existing settings in device storage
   setConfigToStorage({ ...applicationState, config: newConfig });
 
-  // Update the server with our current configuration
-  await requestAPI(`${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/config`, {
-    method: 'POST',
-    headers: {
-      'Authorization': applicationState.auth?.access_key,
-      'Content-Type': 'application/json',
-      'Content-Length': `${JSON.stringify(newConfig).length}`,
-    },
-    body: JSON.stringify(newConfig),
+  mqttClient.publish({
+    topic: responseTopic,
+    payload: newConfig,
+    correlationData: newConfig,
   });
 };
-
-export default evaluateConfigVersion;

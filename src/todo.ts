@@ -3,12 +3,13 @@ import { readErrLogFromStorage, readStdLogFromStorage, saveFirmwareToStorage } f
 import requestAPI from './helpers/network.js';
 import { FIRMWARE_VERSION } from './helpers/constants.js';
 import { getDeviceFirmwareVersion, performFirmwareUpdate } from './helpers/device.js';
-import { Command, Licence } from './helpers/types';
+import { Command, FirmwareVersion, License } from './helpers/types';
+import { mqttClient } from './helpers/mqtt';
 
 // This file contains all the functions that should be implemented in a real device
 // They are called automatically by the framework
 
-export const applyLicense = async (license: Licence) => {
+export const applyLicense = async (license: License) => {
   console.group('ApplyLicense fn');
   console.log('TODO: Apply new license', license);
   try {
@@ -20,7 +21,7 @@ export const applyLicense = async (license: Licence) => {
   }
 };
 
-export const removeLicense = async (license: Licence) => {
+export const removeLicense = async (license: License) => {
   console.group('RemoveLicense fn');
   console.log('TODO: Remove existing license', license);
   try {
@@ -30,6 +31,21 @@ export const removeLicense = async (license: Licence) => {
   } finally {
     console.groupEnd();
   }
+};
+
+export const upgradeFirmware = async (firmwareUrl: string) => {
+  const firmwareFile = await requestAPI(firmwareUrl, {
+    method: 'GET',
+    headers: {
+      'Authorization': applicationState.auth?.access_key,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // Save to disk
+  saveFirmwareToStorage(firmwareFile);
+
+  await performFirmwareUpdate();
 };
 
 const executeFirmwareUpgrade = async (command: Command) => {
@@ -141,7 +157,7 @@ export const executeCommand = async (command: Command) => {
     switch (command.name) {
       case 'update_firmware':
         return await executeFirmwareUpgrade(command);
-      case 'restart':
+      case 'reboot':
         return await executeRestart(command);
       case 'dump':
         return await executeDump(command);

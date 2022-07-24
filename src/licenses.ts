@@ -1,13 +1,26 @@
 import { applyLicense, removeLicense } from './todo.js';
 import { setConfigToStorage } from './helpers/storage.js';
-import requestAPI from './helpers/network.js';
-import { Licence } from './helpers/types';
+import { License } from './helpers/types';
+import { mqttClient } from './helpers/mqtt.js';
+
+export const isLicenseMessage = (topic: string) => /^v1\/device\/.*\/license$/.test(topic);
+
+export const onLicenseCommand = async (license: License, responseTopic: string) => {
+  const { add, remove, update, ...licenseWithoutStatus } = license;
+  if (add) {
+    await handleAddLicense(licenseWithoutStatus, responseTopic);
+  }
+
+  if (remove) {
+    await handleRemoveLicense(licenseWithoutStatus, responseTopic);
+  }
+};
 
 // License addition has 3 steps:
 // 1. Enable relevant features on the device
 // 2. Add to stored licenses list
 // 3. Notify server license was activated
-const handleAddLicense = async (license: Licence) => {
+const handleAddLicense = async (license: License, responseTopic: string) => {
   console.group('HandleAddLicense fn');
 
   await applyLicense(license);
@@ -21,15 +34,12 @@ const handleAddLicense = async (license: Licence) => {
     state: 'inuse',
   });
 
-  await requestAPI(`${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/licenses`, {
-    method: 'POST',
-    headers: {
-      'Authorization': applicationState.auth?.access_key,
-      'Content-Type': 'application/json',
-      'Content-Length': `${licensePayload.length}`,
-    },
-    body: licensePayload,
+  mqttClient.publish({
+    topic: responseTopic,
+    payload: licensePayload,
+    correlationData: license.id,
   });
+
   console.groupEnd();
 
   return true;
@@ -39,7 +49,7 @@ const handleAddLicense = async (license: Licence) => {
 // 1. Disable relevant features on the device
 // 2. Remove from stored licenses list
 // 3. Notify server license was removed
-const handleRemoveLicense = async (license: Licence) => {
+const handleRemoveLicense = async (license: License, responseTopic: string) => {
   console.group('HandleRemoveLicense fn');
 
   await removeLicense(license);
@@ -55,59 +65,13 @@ const handleRemoveLicense = async (license: Licence) => {
     state: 'removed',
   });
 
-  await requestAPI(`${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/licenses`, {
-    method: 'POST',
-    headers: {
-      'Authorization': applicationState.auth?.access_key,
-      'Content-Type': 'application/json',
-      'Content-Length': `${licensePayload.length}`,
-    },
-    body: licensePayload,
+  mqttClient.publish({
+    topic: responseTopic,
+    payload: licensePayload,
+    correlationData: license.id,
   });
+
   console.groupEnd();
 
   return true;
 };
-
-// For each license, check if it is marked to be added or removed
-const handleLicense = async (license: Licence) => {
-  console.group('HandleLicense fn');
-  if (Boolean(license.add)) {
-    const hasAdded = await handleAddLicense(license);
-
-    if (hasAdded) {
-      delete license['add'];
-    }
-  } else if (Boolean(license.remove)) {
-    const hasDeleted = await handleRemoveLicense(license);
-
-    if (hasDeleted) {
-      delete license['remove'];
-    }
-  }
-  console.groupEnd();
-};
-
-const handleLicenses = async () => {
-  const licenses = await requestAPI(
-    `${applicationState.auth?.hub_url}/v1/devices/${applicationState.auth?.id}/licenses`,
-    {
-      method: 'GET',
-      headers: {
-        'Authorization': applicationState.auth?.access_key,
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
-  /*
-    The following code makes sure each license update is done one after the other.
-    Only once a license is applied/removed, the next one will be handled sequentially
-    In order to avoid potential concurrency issues.
-  */
-  for (const license of licenses) {
-    await handleLicense(license);
-  }
-};
-
-export default handleLicenses;
