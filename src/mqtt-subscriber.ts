@@ -30,7 +30,7 @@ export const listenToMessages = () => {
         await onFirmwareVersionMessage(message as FirmwareVersion);
       }
     } catch (error) {
-      console.log(`Failed parsing message for topic: ${topic}`);
+      console.log(`Failed parsing message for topic: ${topic}`, payload.toString());
     }
   });
 };

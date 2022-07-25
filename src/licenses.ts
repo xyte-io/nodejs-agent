@@ -29,10 +29,10 @@ const handleAddLicense = async (license: License, responseTopic: string) => {
   setConfigToStorage({ ...applicationState, licenses: [...applicationState.licenses, license] });
 
   // Update the server on the state of the license
-  const licensePayload = JSON.stringify({
+  const licensePayload = {
     id: license.id,
     state: 'inuse',
-  });
+  };
 
   mqttClient.publish({
     topic: responseTopic,
@@ -60,10 +60,10 @@ const handleRemoveLicense = async (license: License, responseTopic: string) => {
   setConfigToStorage({ ...applicationState, licenses: newLicensesList });
 
   // Update the server on the state of the license
-  const licensePayload = JSON.stringify({
+  const licensePayload = {
     id: license.id,
     state: 'removed',
-  });
+  };
 
   mqttClient.publish({
     topic: responseTopic,

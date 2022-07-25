@@ -14,5 +14,7 @@ export const onCommandReceived = async (command: Command, responseTopic: string)
 
   const commandStatus = await executeCommand(command);
 
+  console.log({ commandStatus, responseTopic, correlationData: command.id });
+
   mqttClient.publish({ topic: responseTopic, payload: commandStatus, correlationData: command.id });
 };
