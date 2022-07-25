@@ -1,1 +1,0 @@
-{"auth": {"id":"12345678-1234-1234-1234-123456789012","access_key":"12345678901234567890123456789012", "hub_url": "https://xyte.io", "hub_url_static_cert": "https://xyte.io"}}
