@@ -8,8 +8,10 @@
   "types": "lib/main.d.ts",
   "scripts": {
     "build": "tsc",
-    "run-js": "tsc && node ./lib/init.js",
+    "dev": "ts-node --esm ./src/init",
+    "dev:js": "tsc && node ./lib/init.js",
     "bundle": "tsc --noEmit && node scripts/build.forever.js && node scripts/build.main.js",
+    "bundle:node10": "tsc --noEmit && node scripts/node10/build.forever.js && node scripts/node10/build.main.js",
     "format": "prettier --write \"src/**/*.(js|ts)\"",
     "lint": "eslint src --ext .js,.ts",
     "lint:fix": "eslint src --fix --ext .js,.ts",
@@ -43,6 +45,7 @@
     "fetch-mock": "9.11.0",
     "lint-staged": "13.0.2",
     "prettier": "2.7.1",
+    "ts-node": "10.9.1",
     "typescript": "4.7.4",
     "vite": "2.9.13",
     "vitest": "0.17.0"

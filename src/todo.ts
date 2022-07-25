@@ -3,8 +3,7 @@ import { readErrLogFromStorage, readStdLogFromStorage, saveFirmwareToStorage } f
 import requestAPI from './helpers/network.js';
 import { FIRMWARE_VERSION } from './helpers/constants.js';
 import { getDeviceFirmwareVersion, performFirmwareUpdate } from './helpers/device.js';
-import { Command, FirmwareVersion, License } from './helpers/types';
-import { mqttClient } from './helpers/mqtt';
+import { Command, Config, License } from './helpers/types';
 
 // This file contains all the functions that should be implemented in a real device
 // They are called automatically by the framework
@@ -63,7 +62,7 @@ const executeFirmwareUpgrade = async (command: Command) => {
     };
   }
 
-  const firmwareUrl = command.parameters.url;
+  const firmwareUrl = command.parameters.url as string;
 
   const firmwareFile = await requestAPI(firmwareUrl, {
     method: 'GET',
@@ -184,7 +183,7 @@ export const executeCommand = async (command: Command) => {
   }
 };
 
-export const updateConfig = async (config: any) => {
+export const updateConfig = async (config: Config) => {
   console.log('TODO: Update device config', config);
   try {
     return;

@@ -4,11 +4,12 @@ import restart from './restart.js';
 import { clearStorage } from './storage.js';
 import { INITIAL_APP_STATE } from './constants.js';
 
-const requestAPI = async (url: string, requestPayload: any) => {
+const requestAPI = async (url: string, requestPayload: Record<string, unknown>) => {
   console.group('RequestAPI fn');
   console.log('url:', url);
   console.log('payload:', requestPayload);
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore ts doesn't recognise fetch as there are no types for it yet :)
   const rawResponse = await fetch(url, requestPayload);
 

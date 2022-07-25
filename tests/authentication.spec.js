@@ -7,44 +7,43 @@ import authenticateDevice from '../src/authentication';
 import { authenticateDeviceFromStorage, readConfigFromStorage } from '../src/helpers/storage';
 import { CONFIG_FILE_NAME, DEVICE_PROVISIONING_SERVER, INITIAL_APP_STATE } from '../src/helpers/constants';
 
-const configFileContents =
+const CONFIG_FILE_CONTENTS =
   '{"auth": {"id":"12345678-1234-1234-1234-123456789012","access_key":"12345678901234567890123456789012", "hub_url": "https://xyte.io", "hub_url_static_cert": "https://xyte.io"}}';
-const configFileParsed = JSON.parse(configFileContents);
+const CONFIG_FILE_PARSED = JSON.parse(CONFIG_FILE_CONTENTS);
+const PATH_TO_CONFIG_FILE = path.resolve('./src/helpers', CONFIG_FILE_NAME);
 
 describe('Authenticate and register device', () => {
   afterEach(() => {
     applicationState = INITIAL_APP_STATE;
 
     console.log('removing files:', CONFIG_FILE_NAME);
-    fs.existsSync(path.resolve(CONFIG_FILE_NAME)) && fs.unlinkSync(path.resolve(CONFIG_FILE_NAME));
+    fs.existsSync(PATH_TO_CONFIG_FILE) && fs.unlinkSync(PATH_TO_CONFIG_FILE);
 
     console.log('flushing network mocks');
     fetchMock.reset();
   });
 
   test('Authenticate from storage - only getting config from storage', async () => {
-    fs.writeFileSync(path.resolve(CONFIG_FILE_NAME), configFileContents, 'ascii');
+    fs.writeFileSync(PATH_TO_CONFIG_FILE, CONFIG_FILE_CONTENTS, 'ascii');
 
     const configStorage =
-      fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
-      JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
+      fs.existsSync(PATH_TO_CONFIG_FILE) && JSON.parse(fs.readFileSync(PATH_TO_CONFIG_FILE, 'ascii'));
 
-    assert.deepEqual((await configStorage).auth, configFileParsed.auth);
-    assert.deepEqual((await readConfigFromStorage()).auth, configFileParsed.auth);
+    assert.deepEqual((await configStorage).auth, CONFIG_FILE_PARSED.auth);
+    assert.deepEqual((await readConfigFromStorage()).auth, CONFIG_FILE_PARSED.auth);
 
     applicationState = INITIAL_APP_STATE;
     await authenticateDeviceFromStorage();
-    assert.deepEqual(applicationState.auth, configFileParsed.auth);
+    assert.deepEqual(applicationState.auth, CONFIG_FILE_PARSED.auth);
 
     applicationState = INITIAL_APP_STATE;
     await authenticateDevice();
-    assert.deepEqual(applicationState.auth, configFileParsed.auth);
+    assert.deepEqual(applicationState.auth, CONFIG_FILE_PARSED.auth);
   });
 
   test('Register device - fail to authenticate from storage and succeed registering (by mock registration response)', async () => {
     const configStorage =
-      fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
-      JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
+      fs.existsSync(PATH_TO_CONFIG_FILE) && JSON.parse(fs.readFileSync(PATH_TO_CONFIG_FILE, 'ascii'));
 
     assert.isFalse(configStorage);
 
@@ -64,8 +63,7 @@ describe('Authenticate and register device', () => {
     assert.deepEqual(applicationState.auth, registrationResponseMock);
 
     const newConfigStorage =
-      fs.existsSync(path.resolve(CONFIG_FILE_NAME)) &&
-      JSON.parse(fs.readFileSync(path.resolve(CONFIG_FILE_NAME), 'ascii'));
+      fs.existsSync(PATH_TO_CONFIG_FILE) && JSON.parse(fs.readFileSync(PATH_TO_CONFIG_FILE, 'ascii'));
 
     assert.deepEqual(newConfigStorage.auth, registrationResponseMock);
   });
