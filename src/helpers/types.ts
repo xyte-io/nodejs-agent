@@ -1,6 +1,6 @@
 /* eslint-disable no-var */
 
-export type Auth = Record<'id' | 'access_key' | 'hub_url' | 'hub_url_static_cert', string> | null;
+export type Auth = Record<'id' | 'access_key' | 'hub_url' | 'hub_url_static_cert' | 'mqtt_hub_url', string> | null;
 export type Config = ({ version: number; last_updated: string } & Record<string, unknown>) | null;
 export type License = {
   id: string;
