@@ -12,6 +12,6 @@ export const performFirmwareUpdate = async () => {
 };
 
 export const getCommandStatusAfterReboot = (command: Command) => {
-  console.log('TODO: handle device reboot status');
+  console.log('TODO: handle device reboot status', command);
   return { status: 'done', message: 'Device restart OK', error: '' };
 };

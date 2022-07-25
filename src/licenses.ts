@@ -1,13 +1,13 @@
 import { applyLicense, removeLicense } from './todo.js';
 import { setConfigToStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
-import { Licence } from './helpers/types';
+import { License } from './helpers/types';
 
 // License addition has 3 steps:
 // 1. Enable relevant features on the device
 // 2. Add to stored licenses list
 // 3. Notify server license was activated
-const handleAddLicense = async (license: Licence) => {
+const handleAddLicense = async (license: License) => {
   console.group('HandleAddLicense fn');
 
   await applyLicense(license);
@@ -39,7 +39,7 @@ const handleAddLicense = async (license: Licence) => {
 // 1. Disable relevant features on the device
 // 2. Remove from stored licenses list
 // 3. Notify server license was removed
-const handleRemoveLicense = async (license: Licence) => {
+const handleRemoveLicense = async (license: License) => {
   console.group('HandleRemoveLicense fn');
 
   await removeLicense(license);
@@ -70,7 +70,7 @@ const handleRemoveLicense = async (license: Licence) => {
 };
 
 // For each license, check if it is marked to be added or removed
-const handleLicense = async (license: Licence) => {
+const handleLicense = async (license: License) => {
   console.group('HandleLicense fn');
   if (Boolean(license.add)) {
     const hasAdded = await handleAddLicense(license);
