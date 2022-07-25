@@ -11,7 +11,7 @@ The code can be used for reference and sample testing in environments capable of
 ## Requirements
 
 * Partner account on Xyte
-* Node version 18 or above (* see notes)
+* [Node version 18.5](https://nodejs.org/en/blog/vulnerability/july-2022-security-releases/) or above (* see notes for older version support)
 
 ## Installation
 
@@ -45,16 +45,21 @@ the [Application Portal](https://app.xyte.io/)
 ### Notes
 
 * For envs like `nw.js` use `dist/nw.js.index.html` file and consult the docs of your provider on how to load them.
-* This code was tested with NodeJS@18 but may run on older versions.
+* This code was tested with NodeJS@18.5 but may run on older versions.
 * Please note that `dist/node-agent-starter.min.js` is an auxiliary script, you may run `dist/node-agent-main.min.js`
   directly, but you should be using your preferred tools to ensure that the agent runs continuously.
 
 ## Development
 
-For easier live development, the code can be execution without building:
+For easier live development, the code can be executed without bundling & minification:
 
 * Open a shell/command-line
-* Run `npm run run-js`
+* Execute:
+  * If you prefer editing TS code:
+    * If you prefer running with TS-Node: `npm run dev`
+    * If you prefer running JS: `npm run dev:js`
+  * If you prefer editing JS code:
+    * Build (`npm run dev`) and then copy the output (`./lib`) to your workspace, you may use a library like `nodemon` for file watching.
 * please search the project for `TODO` comments and console logs, they are there for you to let you know that something
   needs to be implemented. We did our best to localize those `TODO`s in two files: `src/helpers/constants.ts`
   and `src/todos.ts`. the latter for implementing device functionalities. 
