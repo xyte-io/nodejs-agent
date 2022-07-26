@@ -1,4 +1,5 @@
 import mqtt, { QoS } from 'mqtt';
+import { IClientPublishOptions } from 'mqtt/types/lib/client-options';
 
 class Mqtt {
   client: mqtt.MqttClient | null = null;
@@ -49,25 +50,25 @@ class Mqtt {
     qos?: QoS;
     correlationData?: any;
   }) {
-    this.client?.publish(
-      topic,
-      JSON.stringify(payload),
-      {
-        qos,
-        properties: {
-          correlationData: correlationData ? Buffer.from(correlationData) : undefined,
-          userProperties: {
-            device_id: global.applicationState!.auth!.id,
-            access_key: global.applicationState!.auth!.access_key,
-          },
+    const publishOptions: IClientPublishOptions = {
+      qos,
+      properties: {
+        userProperties: {
+          device_id: global.applicationState!.auth!.id,
+          access_key: global.applicationState!.auth!.access_key,
         },
       },
-      (error) => {
-        if (error) {
-          console.log('failed to publish', error);
-        }
+    };
+
+    if (correlationData) {
+      publishOptions.properties!.correlationData = Buffer.from(correlationData);
+    }
+
+    this.client?.publish(topic, JSON.stringify(payload), publishOptions, (error) => {
+      if (error) {
+        console.log('failed to publish', error);
       }
-    );
+    });
   }
 }
 
