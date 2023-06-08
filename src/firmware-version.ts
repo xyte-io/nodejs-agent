@@ -3,7 +3,7 @@ import { mqttClient } from './helpers/mqtt.js';
 import { getDeviceFirmwareVersion } from './helpers/device.js';
 import { FirmwareVersion } from './helpers/types';
 
-export const isFirmwareVersionMessage = (topic: string) => /^v1\/device\/.*\/space_info$/.test(topic);
+export const isFirmwareVersionMessage = (topic: string) => /^v1\/device\/.*\/firmware$/.test(topic);
 
 export const onFirmwareVersionMessage = async (firmwareVersion: FirmwareVersion) => {
   console.log('example firmware version compare, firmware retrieving ');
@@ -11,6 +11,7 @@ export const onFirmwareVersionMessage = async (firmwareVersion: FirmwareVersion)
   const serverFirmwareVersion = firmwareVersion.latest_fw_version;
   const deviceFirmwareVersion = getDeviceFirmwareVersion();
 
+  console.log({ serverFirmwareVersion, deviceFirmwareVersion });
   if (serverFirmwareVersion === deviceFirmwareVersion) {
     return;
   }
