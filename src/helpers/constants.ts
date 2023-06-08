@@ -1,10 +1,14 @@
 console.log('TODO: retrieve real value from xyte app');
-export const FAKE_HARDWARE_KEY = 'c10b96ad-4d2c-4c1d-b932-ba022566e840';
+export const FAKE_HARDWARE_KEY = '923a83d3-b0ae-4360-b805-ce14035fc3ce';
 console.log('TODO: generate a real nano id');
-export const FAKE_NANO_ID = 'zvX9xMXpNkqCmVFzSa10keVH';
+export const FAKE_NANO_ID = 'cJhgLsIstautD_4mJYpz5fwz';
+
+console.log('TODO: generate a real nano id');
+export const FAKE_SERIAL_NUMBER = '123';
 
 export const HARDWARE_KEY = FAKE_HARDWARE_KEY;
 export const NANO_ID = FAKE_NANO_ID;
+export const SN = FAKE_SERIAL_NUMBER;
 console.log('TODO: use a real firmware version');
 export const FIRMWARE_VERSION = '1.0.3';
 console.log('TODO: use a real device name');

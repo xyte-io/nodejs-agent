@@ -6,13 +6,15 @@ import {
   DEVICE_PROVISIONING_SERVER,
   DEVICE_PROVISIONING_PROXY,
   INITIAL_APP_STATE,
+  SN,
 } from './helpers/constants.js';
 import { authenticateDeviceFromStorage, setConfigToStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
 import { Auth } from './helpers/types';
 
 const REGISTRATION_PAYLOAD = JSON.stringify({
-  nano_id: NANO_ID, // TODO: retrieve real value from xyte app
+  cloud_id: NANO_ID, // TODO: retrieve real value from xyte app
+  sn: SN,
   hardware_key: HARDWARE_KEY, // TODO: generate a real nano id
   firmware_version: FIRMWARE_VERSION, // TODO: use a real firmware version
   name: DEVICE_NAME, // TODO: use a real name
