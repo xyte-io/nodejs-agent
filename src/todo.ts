@@ -1,3 +1,4 @@
+import os from 'os';
 import { execSync } from 'child_process';
 import { readErrLogFromStorage, readStdLogFromStorage, saveFirmwareToStorage } from './helpers/storage.js';
 import requestAPI from './helpers/network.js';
@@ -152,10 +153,20 @@ export const updateConfig = async (config: Config) => {
 export const getTelemetry = async () => {
   console.log('TODO: Get telemetry data for the device is not implemented, using dummy data');
 
+  // Get system memory
+  const totalMemory = os.totalmem();
+  const freeMemory = os.freemem();
+  const usageMemory = Math.round(((totalMemory - freeMemory) / totalMemory) * 100);
+
   return {
     status: 'online',
     telemetries: {
-      ...process.memoryUsage(),
+      totalMemory,
+      freeMemory,
+      usageMemory,
+      loadAverage: os.loadavg()[0],
+      uptime: os.uptime() / 60,
+      arch: os.arch(),
     },
   };
 };
