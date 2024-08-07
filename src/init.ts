@@ -8,7 +8,7 @@ process.on('SIGTERM', () => {
 
 // Main entry point
 (async () => {
-  console.log('Starting Xyte demo agent');
+  console.log('\nStarting Xyte demo agent\n');
 
   await main();
 })();

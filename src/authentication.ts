@@ -42,7 +42,7 @@ const registerDevice = async () => {
 
   registrationResponse = await registerDeviceToProvisioningServer(DEVICE_PROVISIONING_SERVER);
 
-  console.log('device registration response:', registrationResponse);
+  console.log('Device registration response:', registrationResponse);
 
   if (Boolean(registrationResponse?.id)) {
     applicationState = { ...INITIAL_APP_STATE, auth: registrationResponse };

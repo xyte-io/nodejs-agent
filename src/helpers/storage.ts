@@ -39,7 +39,9 @@ export const readConfigFromStorage = () => {
 
 // Overwrite config JSON data in file
 export const setConfigToStorage = (payload: State) => {
-  console.log('Save (overwrite) state to local storage');
+  if (LOG_LEVEL === 'debug') {
+    console.log('Save (overwrite) state to local storage');
+  }
 
   fs.writeFileSync(path.resolve(dirname, CONFIG_FILE_NAME), JSON.stringify(payload), 'ascii');
 };
