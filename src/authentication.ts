@@ -1,5 +1,6 @@
 import {
   HARDWARE_KEY,
+  SERIAL_NUMBER,
   CLOUD_ID,
   FIRMWARE_VERSION,
   DEVICE_NAME,
@@ -14,6 +15,7 @@ const REGISTRATION_PAYLOAD = JSON.stringify({
   cloud_id: CLOUD_ID,
   hardware_key: HARDWARE_KEY,
   firmware_version: FIRMWARE_VERSION,
+  sn: SERIAL_NUMBER,
   name: DEVICE_NAME,
 });
 

@@ -1,14 +1,19 @@
-console.log('TODO: retrieve real value from xyte app');
-export const FAKE_HARDWARE_KEY = 'c10b96ad-4d2c-4c1d-b932-ba022566e840';
-console.log('TODO: generate a real nano id');
-export const FAKE_NANO_ID = 'zvX9xMXpNkqCmVFzSa10keVH';
+console.log('-------------------------------------------------------------');
+console.log('TODO: Setup device configuration in /src/helpers/constants.ts');
+console.log('-------------------------------------------------------------');
 
-export const HARDWARE_KEY = FAKE_HARDWARE_KEY;
-export const CLOUD_ID = FAKE_NANO_ID;
-console.log('TODO: use a real firmware version');
+// Model level settings
+export const HARDWARE_KEY = '4623234a-710e-4bc5-a6c5-923de6d5f433';
+
+// Device level settings
+
+export const CLOUD_ID = 'QzuaKQNOxgMww6gUTTmD65em';
 export const FIRMWARE_VERSION = '1.0.3';
-console.log('TODO: use a real device name');
-export const DEVICE_NAME = 'Hi, My name is TODO BOM';
+export const DEVICE_NAME = 'Sample device';
+export const SERIAL_NUMBER = '1000';
+
+// Generic cross device settings
+
 export const CONFIG_FILE_NAME = 'config.txt';
 export const FIRMWARE_FILE_NAME = 'firmware.txt';
 export const STD_LOG_FILE = 'out.log';
