@@ -2,12 +2,14 @@ import 'isomorphic-fetch'; //  imported as specified in docs!
 import { revokeDevice } from '../todo.js';
 import restart from './restart.js';
 import { clearStorage } from './storage.js';
-import { INITIAL_APP_STATE } from './constants.js';
+import { INITIAL_APP_STATE, LOG_LEVEL } from './constants.js';
 
 const requestAPI = async (url: string, requestPayload: Record<string, unknown>) => {
-  console.group('RequestAPI fn');
-  console.log('url:', url);
-  console.log('payload:', requestPayload);
+  if (LOG_LEVEL === 'debug') {
+    console.group('RequestAPI fn');
+    console.log('url:', url);
+    console.log('payload:', requestPayload);
+  }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore ts doesn't recognise fetch as there are no types for it yet :)
@@ -31,7 +33,10 @@ const requestAPI = async (url: string, requestPayload: Record<string, unknown>) 
   }
 
   const response = await rawResponse.json();
-  console.groupEnd();
+
+  if (LOG_LEVEL === 'debug') {
+    console.groupEnd();
+  }
 
   return response;
 };

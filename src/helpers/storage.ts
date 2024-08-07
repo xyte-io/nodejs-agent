@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import url from 'url';
-import { CONFIG_FILE_NAME, ERR_LOG_FILE, FIRMWARE_FILE_NAME, INITIAL_APP_STATE, STD_LOG_FILE } from './constants.js';
+import { CONFIG_FILE_NAME, ERR_LOG_FILE, FIRMWARE_FILE_NAME, INITIAL_APP_STATE, STD_LOG_FILE, LOG_LEVEL } from './constants.js';
 import { State } from './types';
 
 const dirname = Boolean(import.meta.url) ? url.fileURLToPath(new URL('.', import.meta.url)) : __dirname;
@@ -39,7 +39,9 @@ export const readConfigFromStorage = () => {
 
 // Overwrite config JSON data in file
 export const setConfigToStorage = (payload: State) => {
-  console.log('Save (overwrite) state to local storage');
+  if (LOG_LEVEL === 'debug') {
+    console.log('Save (overwrite) state to local storage');
+  }
 
   fs.writeFileSync(path.resolve(dirname, CONFIG_FILE_NAME), JSON.stringify(payload), 'ascii');
 };
@@ -48,7 +50,9 @@ export const setConfigToStorage = (payload: State) => {
 export const authenticateDeviceFromStorage = () => {
   const storedConfig = readConfigFromStorage();
 
-  console.log('Get device authentication data: ', storedConfig?.auth);
+  if (LOG_LEVEL === 'debug') {
+    console.log('Device authentication data in local storage: ', storedConfig?.auth);
+  }
 
   if (Boolean(storedConfig?.auth?.id)) {
     applicationState = storedConfig;
