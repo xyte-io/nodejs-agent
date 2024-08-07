@@ -21,3 +21,6 @@ export const ERR_LOG_FILE = 'err.log';
 export const DEVICE_PROVISIONING_SERVER = 'https://entry.xyte.io';
 export const INTERVAL_IN_MS = 10 * 1000; // How often to send telemetry (in milliseconds)
 export const INITIAL_APP_STATE = { auth: null, config: null, licenses: [] };
+
+// System settings
+export let LOG_LEVEL = 'info'; // 'debug' | 'info' | 'error'

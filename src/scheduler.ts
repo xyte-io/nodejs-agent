@@ -13,6 +13,8 @@ import { INTERVAL_IN_MS } from './helpers/constants.js';
     4. Checks if there are any license changes required
 */
 const notifyServerLoop = async () => {
+  console.log('\n');
+
   // 1. Updates the server with the latest telemetry and use the response from Xyte's servers for the next steps
   const telemetryPayload = JSON.stringify(await getTelemetry());
 

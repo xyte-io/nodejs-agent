@@ -9,32 +9,15 @@ import { Command, Config, License } from './helpers/types';
 // They are called automatically by the framework
 
 export const applyLicense = async (license: License) => {
-  console.group('ApplyLicense fn');
-  console.log('TODO: Apply new license', license);
-  try {
-    return;
-  } catch (error) {
-    throw error;
-  } finally {
-    console.groupEnd();
-  }
+  console.log('TODO: Apply new license is not implemented!', license);
 };
 
 export const removeLicense = async (license: License) => {
-  console.group('RemoveLicense fn');
-  console.log('TODO: Remove existing license', license);
-  try {
-    return;
-  } catch (error) {
-    throw error;
-  } finally {
-    console.groupEnd();
-  }
+  console.log('TODO: Remove existing license is not implemented!', license);
 };
 
 const executeFirmwareUpgrade = async (command: Command) => {
-  console.log('TODO: Handle update_firmware command');
-  console.log('example firmware version compare, firmware retrieving ');
+  console.log('TODO: Handle update_firmware command is not implemented, performing a dummy update');
 
   const serverFirmwareVersion = command.parameters.version || FIRMWARE_VERSION;
   const deviceFirmwareVersion = getDeviceFirmwareVersion();
@@ -70,13 +53,12 @@ const executeFirmwareUpgrade = async (command: Command) => {
 };
 
 const executeRestart = async (command: Command) => {
-  console.log('TODO: Handle restart command');
-  console.log('attempting device restart - LINUX ONLY');
+  console.log('TODO: Handle restart command has dummy implementation');
 
-  console.log('make sure that you have permissions!');
+  console.log('Attempting device restart - LINUX ONLY');
   console.log(execSync('/sbin/shutdown -r now'));
 
-  console.log("device should restart immediately, if we've reached this point it didn't");
+  // Device should restart immediately, the following code only runs if the device didn't restart
   return {
     id: command.id,
     status: 'failed', // other possible values are: `in_progress`, `done`
@@ -85,8 +67,7 @@ const executeRestart = async (command: Command) => {
 };
 
 const executeDump = async (command: Command) => {
-  console.log('TODO: Handle dump command');
-  console.log('attempting device dump - simply sending logs');
+  console.log('TODO: Handle dump command is not implemented!');
 
   const errorLogDump = readErrLogFromStorage();
 
@@ -133,7 +114,6 @@ const executeDump = async (command: Command) => {
 };
 
 export const executeCommand = async (command: Command) => {
-  console.group('HandleCommand fn');
   console.log('TODO: Handle command', command);
 
   // Handle the command (synchronously)
@@ -162,43 +142,24 @@ export const executeCommand = async (command: Command) => {
       status: 'failed',
       message: `Unable To Execute, error: ${error}`,
     };
-  } finally {
-    console.log("if we've reached this point device didn't shutdown");
-    console.groupEnd();
   }
 };
 
 export const updateConfig = async (config: Config) => {
-  console.log('TODO: Update device config', config);
-  try {
-    return;
-  } catch (error) {
-    throw error;
-  }
+  console.log('TODO: Update device config is not implemented!', config);
 };
 
 export const getTelemetry = async () => {
-  console.group('GetTelemetry fn');
-  console.log('TODO: Get telemetry data for the device');
-  try {
-    return {
-      status: 'online',
-      telemetries: {
-        ...process.memoryUsage(),
-      },
-    };
-  } catch (error) {
-    throw error;
-  } finally {
-    console.groupEnd();
-  }
+  console.log('TODO: Get telemetry data for the device is not implemented, using dummy data');
+
+  return {
+    status: 'online',
+    telemetries: {
+      ...process.memoryUsage(),
+    },
+  };
 };
 
 export const revokeDevice = async () => {
   console.log('TODO: Handle device revocation upon any network response with status=401,403');
-  try {
-    return;
-  } catch (error) {
-    throw error;
-  }
 };
