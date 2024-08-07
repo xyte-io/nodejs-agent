@@ -1,6 +1,6 @@
 import {
   HARDWARE_KEY,
-  NANO_ID,
+  CLOUD_ID,
   FIRMWARE_VERSION,
   DEVICE_NAME,
   DEVICE_PROVISIONING_SERVER,
@@ -11,10 +11,10 @@ import requestAPI from './helpers/network.js';
 import { Auth } from './helpers/types';
 
 const REGISTRATION_PAYLOAD = JSON.stringify({
-  nano_id: NANO_ID, // TODO: retrieve real value from xyte app
-  hardware_key: HARDWARE_KEY, // TODO: generate a real nano id
-  firmware_version: FIRMWARE_VERSION, // TODO: use a real firmware version
-  name: DEVICE_NAME, // TODO: use a real name
+  cloud_id: CLOUD_ID,
+  hardware_key: HARDWARE_KEY,
+  firmware_version: FIRMWARE_VERSION,
+  name: DEVICE_NAME,
 });
 
 const registerDeviceToProvisioningServer = async (url: string): Promise<Auth> =>

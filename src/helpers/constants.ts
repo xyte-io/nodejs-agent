@@ -4,7 +4,7 @@ console.log('TODO: generate a real nano id');
 export const FAKE_NANO_ID = 'zvX9xMXpNkqCmVFzSa10keVH';
 
 export const HARDWARE_KEY = FAKE_HARDWARE_KEY;
-export const NANO_ID = FAKE_NANO_ID;
+export const CLOUD_ID = FAKE_NANO_ID;
 console.log('TODO: use a real firmware version');
 export const FIRMWARE_VERSION = '1.0.3';
 console.log('TODO: use a real device name');
