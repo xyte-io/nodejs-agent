@@ -4,7 +4,6 @@ import {
   FIRMWARE_VERSION,
   DEVICE_NAME,
   DEVICE_PROVISIONING_SERVER,
-  DEVICE_PROVISIONING_PROXY,
   INITIAL_APP_STATE,
 } from './helpers/constants.js';
 import { authenticateDeviceFromStorage, setConfigToStorage } from './helpers/storage.js';
@@ -39,11 +38,7 @@ const registerDevice = async () => {
 
   let registrationResponse = null;
 
-  try {
-    registrationResponse = await registerDeviceToProvisioningServer(DEVICE_PROVISIONING_SERVER);
-  } catch (error) {
-    registrationResponse = await registerDeviceToProvisioningServer(DEVICE_PROVISIONING_PROXY);
-  }
+  registrationResponse = await registerDeviceToProvisioningServer(DEVICE_PROVISIONING_SERVER);
 
   console.log('device registration response:', registrationResponse);
 
